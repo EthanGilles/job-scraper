@@ -1,6 +1,7 @@
-jobs-seen.json
-job-scraper.log
+**/jobs-seen.json
+**/job-scraper.log
 
+# Ignore virtual environments
 venv/
 
 __pycache__/
@@ -8,3 +9,4 @@ __pycache__/
 
 *.env
 .env
+
