@@ -31,6 +31,11 @@ Install all required packages with:
 ```bash
 pip install requests beautifulsoup4 schedule python-dotenv loguru
 ```
+
+Or install using the requirements file 
+```
+pip install requirements.txt
+```
 ---
 ## Setup
 Clone or copy this script
