@@ -248,7 +248,7 @@ def scrape_atlassian():
             continue
         if category.lower() not in categories:
             continue
-        loc_ok = any(("united states" in loc.lower()) or ("remote" in loc.lower()) for loc in locations)
+        loc_ok = any(("united states" in loc.lower()) for loc in locations)
         if not loc_ok:
             continue
         if any(keyword.lower() in title.lower() for keyword in FILTER_KEYWORDS):
