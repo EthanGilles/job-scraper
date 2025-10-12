@@ -9,13 +9,8 @@ from loguru import logger
 # Prometheus metrics
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter, Histogram
-
-# Import your scraper's run_check_once (user specified)
-try:
-    from jobscraper import run_check_once
-except Exception as e:
-    run_check_once = None
-    logger.warning(f"Could not import run_check_once from job_scraper: {e}")
+# jobscraper's run_check_once
+from jobscraper import run_check_once
 
 DATA_FILE = Path("jobs-seen.json")
 LOG_FILE = Path("job-scraper.log")
@@ -34,17 +29,16 @@ Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 def health():
     return {"status": "ok", "time": time.strftime("%Y-%m-%d %H:%M:%S")}
 
-# Job JSON endpoint
+# Jobs JSON endpoint
 @app.get("/jobs", response_class=JSONResponse)
 def jobs():
     """
-    Triggers run_check_once() synchronously (blocking) and then returns the JSON
-    file that run_check_once updates. Good for a personal dashboard (may be slow).
+    Triggers run_check_once() and then returns the JSONfile that run_check_once updates.
     """
     if run_check_once is None:
         raise HTTPException(status_code=500, detail="run_check_once not importable")
 
-    logger.info("API /jobs called — starting run_check_once() (blocking)")
+    logger.info("API /jobs called, starting run_check_once()")
 
     start = time.time()
     try:
@@ -87,5 +81,4 @@ def logs(lines: int = 500):
 
 if __name__ == "__main__":
     logger.info("Starting Job Scraper API")
-    # Run the FastAPI app directly. This will listen on 0.0.0.0:8000
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False, log_level="info")
