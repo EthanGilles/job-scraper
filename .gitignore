@@ -1,3 +1,2 @@
 *.env
 .env
-jobs_seen.json
