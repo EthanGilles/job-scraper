@@ -1,4 +1,10 @@
-*.env
-.env
 jobs-seen.json
 job-scraper.log
+
+venv/
+
+__pycache__/
+*.pyc
+
+*.env
+.env

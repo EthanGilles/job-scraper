@@ -3,3 +3,6 @@ beautifulsoup4
 dotenv
 schedule
 loguru
+fastapi
+uvicorn
+prometheus_fastapi_instrumentator

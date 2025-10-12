@@ -279,25 +279,27 @@ SCRAPERS = {
 }
 
 # comparison
-def find_new_jobs_for_site(site: str, jobs: List[Dict[str, Any]], seen_store: Dict[str, List[str]]) -> List[Dict[str, Any]]:
-    seen_links = set(seen_store.get(site, []))
+def find_new_jobs_for_site(site: str, jobs: List[Dict[str, Any]], seen_store: Dict[str, List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    seen_jobs = seen_store.get(site, [])
+    seen_links = set(j.get("link") for j in seen_jobs if "link" in j)
+
     new: List[Dict[str, Any]] = []
+
     for j in jobs:
         link = (j.get("link") or "").strip()
-        title = (j.get("title") or "").strip()
-        unique_id = link or title
-        if not unique_id:
+        if not link:
             continue
-        if unique_id not in seen_links:
+
+        if link not in seen_links:
             new.append(j)
+
     if new:
         seen_store.setdefault(site, [])
         for j in new:
-            uid = (j.get("link") or j.get("title") or "").strip()
-            if uid and uid not in seen_store[site]:
-                seen_store[site].append(uid)
-    return new
+            if not any(j.get("link") == existing.get("link") for existing in seen_store[site]):
+                seen_store[site].append(j)
 
+    return new
 
 def emailer(recpt, subject, mesg):
     def to_ascii(s: str) -> str:
@@ -363,7 +365,7 @@ def alert(all_new: Dict[str, List[Dict[str, Any]]]):
     logger.info(f"Sent email with {total_new} total new jobs.")
 
 # check routine
-def run_check_once() -> None:
+def run_check_once():
     logger.info("Starting job check")
     seen = load_seen()
     all_new: Dict[str, List[Dict[str, Any]]] = {}
