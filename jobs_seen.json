@@ -1,0 +1,45 @@
+{
+  "stripe": [
+    "https://stripe.com/jobs/listing/backend-engineer-core-technology/6042172",
+    "https://stripe.com/jobs/listing/backend-engineer-internal-systems/7009186",
+    "https://stripe.com/jobs/listing/broadcast-engineer/7281231",
+    "https://stripe.com/jobs/listing/salesforce-engineer-seller-systems/7201375",
+    "https://stripe.com/jobs/listing/software-engineer-intern-summer-and-winter/7210115",
+    "https://stripe.com/jobs/listing/software-engineer-new-grad/7210112"
+  ],
+  "plaid": [
+    "https://plaid.com/careers/openings/engineering/new-york/software-engineer-backend/",
+    "https://plaid.com/careers/openings/engineering/new-york/software-engineer-platform/",
+    "https://plaid.com/careers/openings/engineering/san-francisco/software-engineer-backend/",
+    "https://plaid.com/careers/openings/engineering/san-francisco/software-engineer-platform/",
+    "https://plaid.com/careers/openings/engineering/united-states/software-engineer-web/"
+  ],
+  "digitalocean": [
+    "https://www.digitalocean.com/careers/position/apply/?gh_jid=6822012"
+  ],
+  "atlassian": [
+    "https://careers-apac-atlassian.icims.com/jobs/22203/machine-learning-engineer/job",
+    "https://globalcareers-atlassian.icims.com/jobs/22628/machine-learning-engineer/job",
+    "https://careers-apac-atlassian.icims.com/jobs/22599/machine-learning-system-engineer/job",
+    "https://careers-apac-atlassian.icims.com/jobs/18745/shield-engineer-ii/job",
+    "https://campus-americas.icims.com/jobs/20967/accounting-specialist-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20963/data-engineer-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20962/data-science-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20906/machine-learning-engineer%2c-2026-graduate-u.s./job",
+    "https://campus-americas.icims.com/jobs/20959/machine-learning-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20957/security-engineer-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20958/site-reliability-engineer-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20956/software-engineer-intern%2c-2026-summer-u.s./job",
+    "https://campus-americas.icims.com/jobs/20901/software-engineer%2c-2026-graduate-u.s./job",
+    "https://globalcareers-atlassian.icims.com/jobs/16418/backend-software-engineer/job",
+    "https://globalcareers-atlassian.icims.com/jobs/22945/backend-software-engineer/job",
+    "https://globalcareers-atlassian.icims.com/jobs/16432/frontend-software-engineer/job",
+    "https://globalcareers-atlassian.icims.com/jobs/22946/frontend-software-engineer/job",
+    "https://globalcareers-atlassian.icims.com/jobs/21086/frontend-software-engineer---growth/job",
+    "https://globalcareers-atlassian.icims.com/jobs/22147/machine-learning-engineer/job",
+    "https://careers-americas.icims.com/jobs/16419/backend-software-engineer/job",
+    "https://careers-americas.icims.com/jobs/14922/full-stack-software-engineer/job",
+    "https://careers-americas.icims.com/jobs/16442/full-stack-software-engineer/job",
+    "https://careers-americas.icims.com/jobs/20496/systems-engineer%2c-trust-engineering/job"
+  ]
+}
