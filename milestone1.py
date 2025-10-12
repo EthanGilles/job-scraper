@@ -28,13 +28,14 @@ Keeps track of previously seen jobs in jobs_seen.json
 Alerts three times daily when new jobs appear.
 
 Dependencies:
-    pip install requests beautifulsoup4 schedule dotenv
+    pip install requests beautifulsoup4 schedule dotenv loguru
+    or
+    pip install requirements.txt
 
 Usage:
     python milestone1.py         # Runs continuously and checks 8AM, 12PM and 5PM local time
     python milestone1.py --once  # Runs a single check immediately and quits 
 """
-
 DATA_FILE = Path("jobs_seen.json")
 
 PLAID_URL = "https://plaid.com/careers/?department=Engineering#search"
@@ -44,12 +45,10 @@ ATLASSIAN_URL = "https://www.atlassian.com/endpoint/careers/listings"
 
 FILTER_KEYWORDS = ["PhD", "Senior", "Staff", "Product", "Program", "Manager", "Principal", "Director", "Principle", "Head", "Distinguished"]
 
-
 GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_PASSWD = os.getenv("GMAIL_PASSWD")
 ALERT_RECIPIENT = os.getenv("ALERT_RECIPIENT")
 
-REQUEST_TIMEOUT = 15
 USER_AGENT = "Mozilla/5.0 (compatible; JobAlertBot/1.0; +https://example.com/)"
 
 # logging config
@@ -77,7 +76,7 @@ session.headers.update({"User-Agent": USER_AGENT})
 
 def safe_get(url: str, **kwargs):
     try:
-        r = session.get(url, timeout=REQUEST_TIMEOUT, **kwargs)
+        r = session.get(url, timeout=15, **kwargs)
         r.raise_for_status()
         return r
     except Exception as e:
