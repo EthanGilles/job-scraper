@@ -49,10 +49,6 @@ GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_PASSWD = os.getenv("GMAIL_PASSWD")
 ALERT_RECIPIENT = os.getenv("ALERT_RECIPIENT")
 
-GMAIL_SENDER = 'ehgilles01@gmail.com'
-GMAIL_PASSWD = ''
-ALERT_RECIPIENT = "ehgilles01@gmail.com"
-
 REQUEST_TIMEOUT = 15
 USER_AGENT = "Mozilla/5.0 (compatible; JobAlertBot/1.0; +https://example.com/)"
 
