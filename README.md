@@ -1,5 +1,5 @@
 # Job Scraper
-milestone1.py is an automated job alert script that scrapes multiple company 
+job-scraper.py is an automated job alert script that scrapes multiple company 
 career pages new engineering-related roles and sends you an email notification 
 when new jobs appear.
 
@@ -36,7 +36,7 @@ pip install requests beautifulsoup4 schedule python-dotenv loguru
 Clone or copy this script
 
 ```bash
-git clone https://github.com/<yourusername>/job-alert-scraper.git
+git clone https://github.com/EthanGilles/job-alert-scraper.git
 cd job-alert-scraper
 ```
 
@@ -61,13 +61,13 @@ You must create an App Password in your Google Account if you use 2FA.
 **Run continuously**
 Checks at 8 AM, 12 PM, and 5 PM local time every day:
 ```bash
-python milestone1.py
+python job-scraper.py
 ```
 
 **Run once**
 Checks immediately and exits (useful for testing):
 ```bash
-python milestone1.py --once
+python job-scraper.py --once
 ```
 ---
 ## Emails
