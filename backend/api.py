@@ -6,6 +6,7 @@ import json
 import time
 import uvicorn
 from loguru import logger
+from fastapi.middleware.cors import CORSMiddleware
 # Prometheus metrics
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter, Histogram
@@ -16,6 +17,14 @@ DATA_FILE = Path("jobs-seen.json")
 LOG_FILE = Path("job-scraper.log")
 
 app = FastAPI(title="Job Scraper API", version="1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Prometheus custom metrics
 scrape_counter = Counter("job_scrapes_total", "Total number of scrapes triggered via API")
