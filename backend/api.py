@@ -10,8 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 # Prometheus metrics
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter, Histogram
-# jobscraper's run_check_once
-from jobscraper import run_check_once
+# run_check_once
+from backend.core import run_check_once
 
 DATA_FILE = Path("jobs-seen.json")
 LOG_FILE = Path("job-scraper.log")
