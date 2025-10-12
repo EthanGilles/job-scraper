@@ -31,4 +31,61 @@ Install all required packages with:
 ```bash
 pip install requests beautifulsoup4 schedule python-dotenv loguru
 ```
+---
+## Setup
+Clone or copy this script
+
+```bash
+git clone https://github.com/<yourusername>/job-alert-scraper.git
+cd job-alert-scraper
+```
+
+Create a .env file (this keeps your credentials out of Git)
+```bash
+touch .env
+```
+
+Add the following:
+```
+GMAIL_SENDER="youremail@gmail.com"
+GMAIL_PASSWD="yourapppassword"
+ALERT_RECIPIENT="youremail@gmail.com"
+```
+
+**Important:**
+You must create an App Password in your Google Account if you use 2FA.
+
+---
+## Usage
+
+**Run continuously**
+Checks at 8 AM, 12 PM, and 5 PM local time every day:
+```bash
+python milestone1.py
+```
+
+**Run once**
+Checks immediately and exits (useful for testing):
+```bash
+python milestone1.py --once
+```
+---
+## Emails
+When new jobs are found, you’ll receive an email like:
+
+```
+==================================================
+Total new jobs found: 5
+==================================================
+
+Stripe - 2 new job(s)
+- Backend Engineer, Core Technology -> https://stripe.com/jobs/listing/backend-engineer-core-technology/6042172
+- Infrastructure Engineer -> https://stripe.com/jobs/listing/infrastructure-engineer/6210391
+
+Plaid - 3 new job(s)
+- Software Engineer, Systems -> https://plaid.com/careers/openings/software-engineer-systems
+- ...
+```
+
+---
 
