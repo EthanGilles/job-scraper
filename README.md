@@ -1,4 +1,7 @@
 # Job Scraper
+Assignment for CSCI 5020: Fundementals of Network Engineering at the 
+University of Colorado Boulder Network Engineering Masters.
+
 job-scraper.py is an automated job alert script that scrapes multiple company 
 career pages new engineering-related roles and sends you an email notification 
 when new jobs appear.
