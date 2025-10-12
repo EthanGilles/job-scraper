@@ -1,3 +1,4 @@
 *.env
 .env
-jobs_seen.json
+jobs-seen.json
+job-scraper.log

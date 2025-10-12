@@ -36,7 +36,8 @@ Usage:
     python milestone1.py         # Runs continuously and checks 8AM, 12PM and 5PM local time
     python milestone1.py --once  # Runs a single check immediately and quits 
 """
-DATA_FILE = Path("jobs_seen.json")
+DATA_FILE = Path("jobs-seen.json")
+LOG_FILE = Path("job-scraper.log")
 
 PLAID_URL = "https://plaid.com/careers/?department=Engineering#search"
 DIGITALOCEAN_URL = "https://api.greenhouse.io/v1/boards/digitalocean98/embed/departments" # Greenhouse API that returns a JSON with their job postings.
@@ -45,6 +46,7 @@ ATLASSIAN_URL = "https://www.atlassian.com/endpoint/careers/listings"
 
 FILTER_KEYWORDS = ["PhD", "Senior", "Staff", "Product", "Program", "Manager", "Principal", "Director", "Principle", "Head", "Distinguished"]
 
+load_dotenv()
 GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_PASSWD = os.getenv("GMAIL_PASSWD")
 ALERT_RECIPIENT = os.getenv("ALERT_RECIPIENT")
@@ -54,6 +56,18 @@ USER_AGENT = "Mozilla/5.0 (compatible; JobAlertBot/1.0; +https://example.com/)"
 # logging config
 logger.remove()  # clear default
 logger.add(sys.stdout, level="INFO", format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>")
+
+# Log to file (rotated daily, keep 7 days of logs)
+logger.add(
+    LOG_FILE,
+    level="INFO",
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {message}",
+    rotation="1 day",
+    retention="7 days",
+    compression="zip",  
+    backtrace=True,
+    diagnose=True
+)
 
 # state handling
 def load_seen():
@@ -393,7 +407,6 @@ def start_scheduler():
 
 # entrypoint
 def main():
-    load_dotenv()  # Loads from .env by default
     parser = argparse.ArgumentParser(description=DESCRIPTION,formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("--once", action="store_true", help="Run one check immediately and exit (useful for testing)")
     args = parser.parse_args()
@@ -402,7 +415,7 @@ def main():
         run_check_once()
         return
 
-    run_check_once()
+    # run_check_once()
     start_scheduler()
 
 if __name__ == "__main__":
