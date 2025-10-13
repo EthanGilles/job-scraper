@@ -13,3 +13,9 @@ export async function fetchLogs(lines?: number) {
   if (!res.ok) throw new Error("Network response was not ok");
   return res.text(); // fetch as plain text
 }
+
+export async function fetchStats() {
+  const res = await fetch(`${API_BASE}/stats`);
+  if (!res.ok) throw new Error("Failed to fetch stats");
+  return res.json();
+}

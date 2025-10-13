@@ -12,12 +12,14 @@ export default function LogsPage() {
   if (isLoading) return <div>Loading logs...</div>;
   if (error) return <div>Error loading logs: {(error as Error).message}</div>;
 
-  // split string into lines and reverse for newest first
   const lines = data?.split("\n").reverse() ?? [];
 
   return (
-    <div className="text-white">
-      <LogViewer logs={lines} />
+    <div className="flex flex-col flex-1 h-full"> {/* take all available space */}
+      <div className="card flex flex-col flex-1 overflow-hidden p-6">
+        <h2 className="text-xl font-semibold mb-4">Logs</h2>
+        <LogViewer logs={lines} />
+      </div>
     </div>
   );
 }

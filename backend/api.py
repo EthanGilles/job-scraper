@@ -9,7 +9,7 @@ from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 # Prometheus metrics
 from prometheus_fastapi_instrumentator import Instrumentator
-from prometheus_client import Counter, Histogram
+from prometheus_client import Counter, Histogram, REGISTRY
 # run_check_once
 from backend.core import run_check_once
 
@@ -87,6 +87,45 @@ def logs(lines: int = 500):
     except Exception as e:
         logger.exception(f"Error reading log file {LOG_FILE}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Homepage Dashboard endpoint
+@app.get("/stats")
+def stats():
+    num_companies = 0
+    total_jobs = 0
+
+    if DATA_FILE.exists():
+        try:
+            with DATA_FILE.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+                num_companies = len(data.keys())
+                total_jobs = sum(len(v) for v in data.values())
+        except Exception as e:
+            logger.error(f"Failed to read {DATA_FILE}: {e}")
+
+    # Directly read the counter value
+    total_scrapes = int(scrape_counter._value.get())
+
+    # Compute average from histogram samples
+    avg_duration = 0.0
+    for metric in scrape_duration.collect():
+        # metric.samples is a list of tuples: (name, labels, value)
+        sum_val = None
+        count_val = None
+        for sample in metric.samples:
+            if sample.name.endswith("_sum"):
+                sum_val = sample.value
+            elif sample.name.endswith("_count"):
+                count_val = sample.value
+        if sum_val is not None and count_val:
+            avg_duration = sum_val / count_val
+
+    return {
+        "total_jobs": total_jobs,
+        "companies": num_companies,
+        "total_scrapes": total_scrapes,
+        "scrape_durations_seconds": round(avg_duration, 2),
+    }
 
 if __name__ == "__main__":
     logger.info("Starting Job Scraper API")
