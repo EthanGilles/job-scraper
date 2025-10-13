@@ -65,7 +65,7 @@ export default function HomePage() {
     {/* Average Duration */}
     <div className="card flex flex-col items-center p-6">
       <Clock size={48} className="mb-4 text-[#466f5e]" />
-      <h3 className="text-lg font-semibold">Avg. Duration</h3>
+      <h3 className="text-lg font-semibold">Avg. Scrape Duration</h3>
       <p className="text-2xl font-bold text-[#466f5e]">{`${avgDuration}s`}</p>
     </div>
 
