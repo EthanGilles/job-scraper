@@ -6,23 +6,39 @@ from backend.config import GMAIL_SENDER, GMAIL_PASSWD, ALERT_RECIPIENT
 from backend.logger import logger
 
 def find_new_jobs_for_site(site: str, jobs: List[Dict], seen_store: Dict[str, List[Dict]]) -> List[Dict]:
+    """
+    Compare freshly scraped jobs with those already seen for this site.
+    - Adds new jobs.
+    - Updates changed jobs.
+    - Removes stale jobs (no longer present on the site).
+    Returns: list of *new* jobs (for alerting).
+    """
     seen_jobs = seen_store.get(site, [])
-    seen_links = set(j.get("link") for j in seen_jobs if "link" in j)
-    new: List[Dict] = []
+    seen_by_link = {j.get("link"): j for j in seen_jobs if "link" in j}
+    scraped_by_link = {j.get("link"): j for j in jobs if j.get("link")}
 
-    for j in jobs:
-        link = (j.get("link") or "").strip()
-        if not link:
-            continue
-        if link not in seen_links:
-            new.append(j)
+    new_jobs = []
+    updated_seen = {}
 
-    if new:
-        seen_store.setdefault(site, [])
-        for j in new:
-            if not any(j.get("link") == existing.get("link") for existing in seen_store[site]):
-                seen_store[site].append(j)
-    return new
+    for link, job in scraped_by_link.items():
+        if link not in seen_by_link:
+            new_jobs.append(job)
+            updated_seen[link] = job
+        else:
+            old_job = seen_by_link[link]
+            if job != old_job:
+                logger.debug(f"Job updated for {site}: {job.get('title', '')} ({link})")
+            updated_seen[link] = job  # store updated info
+
+    stale_links = set(seen_by_link.keys()) - set(scraped_by_link.keys())
+    if stale_links:
+        for link in stale_links:
+            logger.info(f"Removing stale job from {site}: {seen_by_link[link].get('title', link)}")
+
+    seen_store[site] = list(updated_seen.values())
+
+    return new_jobs
+
 
 def emailer(recpt, subject, mesg):
     def to_ascii(s: str) -> str:

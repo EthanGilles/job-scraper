@@ -28,18 +28,16 @@ def scrape_digitalocean():
             if not title or not link:
                 continue
 
-            # Only include Denver jobs
-            if "denver" not in location_name.lower():
+            if not any(city in location_name.lower() for city in ["denver", "seattle", "boston", "austin"]):
                 continue
 
-            # Only include jobs in AI, Engineering & Technology
             department_name = ""
             for meta in job.get("metadata", []):
                 if meta.get("name") == "Career Page Grouping":
                     department_name = meta.get("value", "")
                     break
 
-            if "AI, Engineering & Technology" not in department_name:
+            if not any(dept in department_name for dept in ["AI, Engineering & Technology", "Security"]):
                 continue
 
             # Filter out unwanted keywords
@@ -52,7 +50,7 @@ def scrape_digitalocean():
                     "title": title,
                     "location": location_name,
                     "link": link,
-                    "department": department_name,
+                    "category": department_name,
                     "site": "digitalocean"
                 })
 

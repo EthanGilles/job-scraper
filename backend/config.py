@@ -23,7 +23,8 @@ STRIPE_URL = "https://stripe.com/jobs/search?teams=Infrastructure+%26+Corporate+
 ATLASSIAN_URL = "https://www.atlassian.com/endpoint/careers/listings"
 
 FILTER_KEYWORDS = ["PhD", "Senior", "Staff", "Product", "Program", "Manager", 
-                   "Principal", "Director", "Principle", "Head", "Distinguished"]
+                   "Principal", "Director", "Principle", "Head", "Distinguished",
+                   "Marketing", "Accounting", "Salesforce"]
 
 GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_PASSWD = os.getenv("GMAIL_PASSWD")

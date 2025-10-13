@@ -38,7 +38,7 @@ def scrape_plaid():
 
         # filter dupes
         if not any(link == j.get("link") for j in jobs):
-            jobs.append({"title": title, "location": location, "link": link, "site": "plaid"})
+            jobs.append({"title": title, "location": location, "link": link, "category": "Engineering", "site": "plaid"})
 
     logger.info(f"[Plaid] job listings found: {len(jobs)}")
     return jobs
