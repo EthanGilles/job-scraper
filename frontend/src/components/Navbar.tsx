@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Briefcase, FileText, Grid } from "lucide-react";
+import { Home, Briefcase, FileText, Cctv, BriefcaseConveyorBelt} from "lucide-react";
 import pkg from "../../package.json";
+import "@fontsource/rubik";
 
 export default function Navbar() {
   const location = useLocation();
@@ -11,11 +12,14 @@ export default function Navbar() {
       {/* Top Nav */}
       <div>
         <div
-          className="flex items-center h-16 px-4 text-white font-bold text-xl"
+          className="flex items-center h-20 px-6 text-white font-bold text-3xl" 
           style={{ backgroundColor: "#466f5e" }}
         >
-          <Grid className="mr-2" size={28} />
-          Job Scraper
+          <div className="relative w-12 h-12 mr-4"> {}
+            <Cctv size={34} className="absolute -top-3 -left-3" /> {}
+            <BriefcaseConveyorBelt size={28} className="absolute top-3 left-5" /> {}
+          </div>
+          JobWatch
         </div>
 
         <nav className="flex flex-col mt-4 space-y-2 px-2">
@@ -57,7 +61,7 @@ export default function Navbar() {
       {/* Footer */}
       <div className="px-4 py-4 text-center text-gray-400 text-sm">
         <div>Ethan Gilles</div>
-        <div>Job Scraper</div>
+        <div>JobWatch</div>
         <div>Version: v{appVersion}</div>
       </div>
     </div>

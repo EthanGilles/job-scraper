@@ -34,3 +34,17 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.2);
 }
+
+.scroll-snap-x {
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on mobile */
+  scrollbar-width: thin;
+}
+
+.scroll-snap-x::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scroll-snap-x::-webkit-scrollbar-thumb {
+  background-color: var(--accent-primary);
+  border-radius: 4px;
+}
