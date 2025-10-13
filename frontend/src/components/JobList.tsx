@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
 interface Job {
   title: string;
   link: string;
@@ -12,30 +15,52 @@ interface JobListProps {
 }
 
 export default function JobList({ company, logo, jobs }: JobListProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="mb-8 card rounded-2xl border border-gray-100 bg-white">
       {/* Company Header */}
-      <div className="flex items-center justify-between mb-4">
-        {logo && (
-          <img
-            src={logo}
-            alt={`${company} logo`}
-            className="h-16 w-auto max-w-[200px] object-contain"
+      <div
+        className="flex items-center justify-between mb-4 cursor-pointer p-4"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {/* Logo and company name area */}
+        <div className="flex items-center space-x-4">
+          {logo && (
+            <img
+              src={logo}
+              alt={`${company} logo`}
+              className="h-16 w-auto max-w-[200px] object-contain"
+            />
+          )}
+        </div>
+
+        {/* Jobs count and arrow */}
+        <div className="flex items-center space-x-2">
+          <span
+            className="text-sm font-medium px-3 py-1 rounded-full"
+            style={{ backgroundColor: "#e7f0ec", color: "#466f5e" }}
+          >
+            {jobs.length} {jobs.length === 1 ? "job" : "jobs"}
+          </span>
+          <ChevronDown
+            className={`transition-transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            }`}
+            size={24}
           />
-        )}
-        <span
-          className="text-sm font-medium px-3 py-1 rounded-full"
-          style={{ backgroundColor: "#e7f0ec", color: "#466f5e" }}
-        >
-          {jobs.length} {jobs.length === 1 ? "job" : "jobs"}
-        </span>
+        </div>
       </div>
 
       {/* Divider Bar */}
       <div className="h-[2px] bg-gray-200 mb-6"></div>
 
       {/* Jobs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 transition-all duration-300 ${
+          isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+        }`}
+      >
         {jobs.map((job, idx) => (
           <a
             key={idx}
