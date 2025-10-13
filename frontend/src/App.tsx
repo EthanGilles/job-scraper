@@ -12,9 +12,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="flex min-h-screen h-screen"> {/* ensure full height */}
+        {/* Outer container */}
+        <div className="flex h-screen overflow-hidden bg-[var(--bg-main)]">
+          {/* Fixed navbar */}
           <Navbar />
-          <main className="flex-1 p-6 bg-[var(--bg-main)] flex flex-col">
+
+          {/* Scrollable main content with margin to the right of the navbar */}
+          <main className="flex-1 overflow-y-auto p-6 ml-64">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/jobs" element={<JobsPage />} />
@@ -26,8 +30,6 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-
 
 export default App;
 
