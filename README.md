@@ -11,15 +11,15 @@ for tracking new software roles at select companies.
 ![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png)
 
 ---
-## 📑 Table of Contents
-1. [Overview](#-overview)
-9. [Frontend Screenshots](#-frontend-screenshots)
-2. [Features](#-features)
-3. [Tech Stack](#-tech-stack)
-4. [Requirements](#-requirements)
-5. [Setup](#-setup)
-8. [Email Alerts](#-email-alerts)
-10. [Monitoring & Metrics](#-monitoring--metrics)
+## Table of Contents
+- [Overview](#-overview)
+- [Frontend Screenshots](#-frontend-screenshots)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Requirements](#-requirements)
+- [Setup](#-setup)
+- [Email Alerts](#-email-alerts)
+- [Monitoring & Metrics](#-monitoring--metrics)
 
 ---
 ## Overview
