@@ -1,56 +1,110 @@
-# Job Scraper
-Assignment for CSCI 5020: Fundementals of Network Engineering at the 
-University of Colorado Boulder Network Engineering Masters.
+# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge)
+> Automated job scraper and monitoring dashboard for tracking new engineering roles in real time.
 
-job-scraper.py is an automated job alert script that scrapes multiple company 
-career pages new engineering-related roles and sends you an email notification 
-when new jobs appear.
+---
+## Frontend Screenshots
 
-It runs either once for testing or continuously, checking three times a 
-day (8AM, 12PM, and 5PM local time).
+| Dashboard View                                | Job Cards |
+| --------------------------------------------- | ------------------------------------------- |
+| ![Dashboard Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchhome.png) | ![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png) |
+
+
+---
+## 📑 Table of Contents
+1. [Overview](#-overview)
+9. [Frontend Screenshots](#-frontend-screenshots)
+2. [Features](#-features)
+3. [Tech Stack](#-tech-stack)
+4. [Requirements](#-requirements)
+5. [Setup](#-setup)
+8. [Email Alerts](#-email-alerts)
+10. [Monitoring & Metrics](#-monitoring--metrics)
+
+---
+## Overview
+JobWatch is a full-stack automated job monitoring system that scrapes multiple 
+company career pages for new software related roles and provides real-time 
+visibility through both email alerts and a web dashboard.
+
+The backend service scrapes and stores job listings, logs activity, and 
+exposes an API. The frontend dashboard visualizes current job postings, logs, 
+and metrics, enabling users to track scrapes and view company-specific
+listings in a clean, interactive interface.
 
 ---
 ## Features
-- Scrapes jobs from:
+**Scraper**
+- Gathers jobs from multiple companies:
     - Stripe
     - Plaid
     - DigitalOcean
     - Atlassian
-- Filters out roles containing unwanted keywords like “Senior”, “Manager”, or “PhD”.
-- Keeps track of previously seen jobs in a local jobs_seen.json file.
-- Sends a summary email listing only new roles since the last run.
-- Supports manual runs or scheduled runs 3× daily.
-- Uses .env for secure email credentials.
+- Filters out roles containing unwanted keywords like “Senior,” “Manager,” or “PhD.”
+- Maintains a record of seen jobs in jobs_seen.json
+- Runs continuously or manually, scraping 3× daily (8AM, 12PM, 5PM)
+- Sends summary emails for newly discovered jobs only
+- Uses .env for secure credential management
+**Backend (FastAPI)**
+- Exposes endpoints for:
+    - /jobs → Retrieve current job data (JSON)
+    - /logs → Retrieve recent scrape logs
+    - Provides Prometheus metrics (scrape count, duration, job totals)
+    - Supports integration with monitoring dashboards (Grafana, Prometheus)
+**Frontend (React + Vite)**
+- Dynamic dashboard showing:
+    - Job listings organized by company
+    - Real-time logs from backend
+    - Scraping metrics and statistics
+    - Smooth carousel view for company cards
+- Built with React Query, Framer Motion, and Tailwind CSS
+
+---
+## Tech Stack
+| Layer | Technologies |
+|-------|---------------|
+| **Frontend** | React, Vite, Tailwind CSS, React Query |
+| **Backend** | FastAPI, Uvicorn, BeautifulSoup, Loguru, Requests |
+| **Email** | Gmail SMTP, python-dotenv |
+| **Monitoring** | Prometheus metric endpoint |
 
 ---
 ## Requirements
 
-**Python Version:**
+**Python Backend:**
+
+Python Version:
 - Python 3.9+
 
-**Dependencies**
-Install all required packages with:
+**Dependencies**:
+```
+pip install -r requirements.txt
+```
 
+**Frontend**:
+
+Node.js Version:
+- Node 18+
+
+**Dependencies**:
 ```bash
-pip install requests beautifulsoup4 schedule python-dotenv loguru
+npm install react react-dom @tanstack/react-query framer-motion lucide-react tailwindcss @fontsource/rubik
 ```
 
-Or install using the requirements file 
-```
-pip install requirements.txt
-```
 ---
 ## Setup
-Clone or copy this script
+
+1. Clone the repo
 
 ```bash
-git clone https://github.com/EthanGilles/job-alert-scraper.git
-cd job-alert-scraper
+git clone https://github.com/EthanGilles/job-scraper.git
+cd job-scraper
 ```
 
-Create a .env file (this keeps your credentials out of Git)
+2. Create environment variables
+
+Create a .env file in the backend folder (this keeps your credentials out of Git)
 ```bash
-touch .env
+touch ./backend/.env
 ```
 
 Add the following:
@@ -59,24 +113,20 @@ GMAIL_SENDER="youremail@gmail.com"
 GMAIL_PASSWD="yourapppassword"
 ALERT_RECIPIENT="youremail@gmail.com"
 ```
+> You must create an App Password in your Google Account if you use 2FA.
 
-**Important:**
-You must create an App Password in your Google Account if you use 2FA.
-
----
-## Usage
-
-**Run continuously**
-Checks at 8 AM, 12 PM, and 5 PM local time every day:
+3. Run the backend
 ```bash
-python job-scraper.py
+python -m backend.main
 ```
 
-**Run once**
-Checks immediately and exits (useful for testing):
+4. Run the frontend
 ```bash
-python job-scraper.py --once
+cd frontend
+npm start
 ```
+
+
 ---
 ## Emails
 When new jobs are found, you’ll receive an email like:
@@ -96,4 +146,11 @@ Plaid - 3 new job(s)
 ```
 
 ---
+## Monitoring and metrics
+JobWatch exposes Prometheus metrics such as:
+- job_scrapes_total → Total scrapes executed
+- job_scrape_duration_seconds → Scrape duration histogram
+- job_scrapes_created → Latest scrape timestamp
+Integrate with Prometheus or Grafana for real-time monitoring.
 
+---
