@@ -95,7 +95,7 @@ export default function HomePage() {
 
       {/* Companies Scraped */}
       <div className="card flex flex-col items-center p-6 space-y-6">
-        <Building2 size={60} className="mb-4 text-[#6f732f]" />
+        <Building2 size={60} className="text-[#6f732f]" />
         <h3 className="text-3xl font-semibold">Companies Scraped</h3>
         <p className="text-6xl font-bold text-[#6f732f]">{totalCompanies}</p>
       </div>
@@ -106,8 +106,8 @@ export default function HomePage() {
         <h3 className="text-2xl font-semibold">Last Scrape</h3>
         {lastScrape !== "N/A" ? (
           <p className="text-3xl font-bold text-[#6f732f] text-center">
-            <div>{new Date(lastScrape).toLocaleDateString("en-US", { month: "long", day: "numeric" })}</div>
-            <div>{new Date(lastScrape).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}</div>
+            {new Date(lastScrape).toLocaleDateString("en-US", { month: "long", day: "numeric" })}{" at "}
+            {new Date(lastScrape).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
           </p>
         ) : (
           <p className="text-3xl font-bold text-[#6f732f]">N/A</p>

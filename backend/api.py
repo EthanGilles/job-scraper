@@ -46,7 +46,7 @@ def jobs():
     """
     Triggers run_check_once() and then returns the JSONfile that run_check_once updates.
     """
-    global last_scrape_time  # <- add this line
+    global last_scrape_time 
     if run_check_once is None:
         raise HTTPException(status_code=500, detail="run_check_once not importable")
 

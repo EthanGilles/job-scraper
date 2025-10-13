@@ -20,7 +20,7 @@ export default function Navbar() {
         >
           <div className="relative w-12 h-12 mr-4">
             <Cctv size={34} className="absolute -top-3 -left-3" />
-            <BriefcaseConveyorBelt size={28} className="absolute top-3 left-5" />
+            <BriefcaseConveyorBelt size={30} className="absolute top-2 left-6" />
           </div>
           JobWatch
         </div>
