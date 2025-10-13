@@ -1,5 +1,6 @@
 # JobWatch &nbsp;![Version](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge)
-> Automated job scraper and monitoring dashboard for tracking new engineering roles in real time.
+> Automated job scraper and monitoring dashboard 
+for tracking new software roles at select companies.
 
 ---
 ## Frontend Screenshots
