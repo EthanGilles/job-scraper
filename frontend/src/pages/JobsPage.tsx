@@ -4,7 +4,7 @@ import JobList from "../components/JobList";
 
 // Map each company to its logo (SVG, PNG, etc.)
 const companyLogos: Record<string, string> = {
-  digitalocean: "/logos/digitalocean-2.svg",
+  digitalocean: "/logos/digitalocean.svg",
   atlassian: "/logos/atlassian.svg",
   plaid: "/logos/plaid.svg",
   stripe: "/logos/stripe.svg",
