@@ -5,6 +5,7 @@ from pathlib import Path
 import json
 import time
 import uvicorn
+from datetime import datetime
 from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 # Prometheus metrics
@@ -29,6 +30,7 @@ app.add_middleware(
 # Prometheus custom metrics
 scrape_counter = Counter("job_scrapes_total", "Total number of scrapes triggered via API")
 scrape_duration = Histogram("job_scrape_duration_seconds", "Duration of job scrapes triggered via API (seconds)")
+last_scrape_time = None  # global variable to store last scrape
 
 # Metrics endpoint
 Instrumentator().instrument(app).expose(app, endpoint="/metrics")
@@ -44,6 +46,7 @@ def jobs():
     """
     Triggers run_check_once() and then returns the JSONfile that run_check_once updates.
     """
+    global last_scrape_time  # <- add this line
     if run_check_once is None:
         raise HTTPException(status_code=500, detail="run_check_once not importable")
 
@@ -53,8 +56,10 @@ def jobs():
     try:
         run_check_once()
         scrape_counter.inc()
+        last_scrape_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # now updates the global
     except Exception as e:
         logger.exception(f"Error while running run_check_once(): {e}")
+
     duration = time.time() - start
     scrape_duration.observe(duration)
     logger.info(f"Scrape finished in {duration:.2f}s")
@@ -125,6 +130,7 @@ def stats():
         "companies": num_companies,
         "total_scrapes": total_scrapes,
         "scrape_durations_seconds": round(avg_duration, 2),
+        "last_scrape": last_scrape_time or "N/A"
     }
 
 if __name__ == "__main__":
