@@ -3,11 +3,11 @@
 
 ---
 ## Frontend Screenshots
+Dashboard View                                
+![Dashboard Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchhome.png) 
 
-| Dashboard View                                | Job Cards |
-| --------------------------------------------- | ------------------------------------------- |
-| ![Dashboard Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchhome.png) | ![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png) |
-
+Job Cards
+![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png)
 
 ---
 ## 📑 Table of Contents
