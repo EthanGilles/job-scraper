@@ -11,17 +11,6 @@ for tracking new software roles at select companies.
 ![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png)
 
 ---
-## Table of Contents
-- [Overview](#-overview)
-- [Frontend Screenshots](#-frontend-screenshots)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Requirements](#-requirements)
-- [Setup](#-setup)
-- [Email Alerts](#-email-alerts)
-- [Monitoring & Metrics](#-monitoring--metrics)
-
----
 ## Overview
 JobWatch is a full-stack automated job monitoring system that scrapes multiple 
 company career pages for new software related roles and provides real-time 
