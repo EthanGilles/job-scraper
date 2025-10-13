@@ -4,10 +4,10 @@ for tracking new software roles at select companies.
 
 ---
 ## Frontend Screenshots
-Dashboard View                                
+#### Dashboard View                                
 ![Dashboard Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchhome.png) 
 
-Job Cards
+#### Job Cards
 ![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png)
 
 ---
