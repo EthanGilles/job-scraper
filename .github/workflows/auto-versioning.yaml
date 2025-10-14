@@ -1,0 +1,62 @@
+name: Auto Versioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Type of version bump: major, minor, patch'
+        required: true
+        default: patch
+  push:
+    branches:
+      - dev
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Checkout
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # 2️⃣ Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # 3️⃣ Bump version using npm
+      - name: Bump version
+        id: bump_version
+        run: |
+          cd frontend
+          TYPE=${{ github.event.inputs.update_type }}
+          if [ -z "$TYPE" ]; then TYPE="patch"; fi
+          echo "Update type: $TYPE"
+
+          # Bump version in package.json and package-lock.json
+          NEW_VERSION=$(npm version $TYPE --no-git-tag-version)
+          echo "Bumped version to $NEW_VERSION"
+
+          # Export new version to workflow outputs
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      # 4️⃣ Commit changes
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[version bot]"
+          git config user.email "github-actions[version bot]@users.noreply.github.com"
+          git add frontend/package.json frontend/package-lock.json
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dev
+
+      # 5️⃣ Create dev tag
+      - name: Create Git Tag
+        run: |
+          NEW_TAG="v${{ steps.bump_version.outputs.new_version }}-dev"
+          git tag $NEW_TAG
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_TAG
+
