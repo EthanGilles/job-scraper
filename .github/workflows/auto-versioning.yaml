@@ -15,75 +15,48 @@ jobs:
   versioning:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ Checkout
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
 
-
+      # 2️⃣ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Get current version
-        id: get_version
-        run: |
-          VERSION=$(jq -r '.version' frontend/package.json)
-          echo "current_version=$VERSION" >> $GITHUB_OUTPUT
-
+      # 3️⃣ Bump version using npm
       - name: Bump version
         id: bump_version
         run: |
-          CURRENT=${{ steps.get_version.outputs.current_version }}
+          cd frontend
           TYPE=${{ github.event.inputs.update_type }}
-          if [ -z "$TYPE" ]; then
-            TYPE="minor"
-          fi
+          if [ -z "$TYPE" ]; then TYPE="patch"; fi
           echo "Update type: $TYPE"
-          
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
 
-          case "$TYPE" in
-            major)
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              ;;
-            minor)
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              ;;
-            patch)
-              PATCH=$((PATCH + 1))
-              ;;
-            *)
-              echo "Invalid update_type: $TYPE"
-              exit 1
-                ;;
-            esac
+          # Bump version in package.json and package-lock.json
+          NEW_VERSION=$(npm version $TYPE --no-git-tag-version)
+          echo "Bumped version to $NEW_VERSION"
 
-            NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-            echo "Bumping version from $CURRENT to $NEW_VERSION"
+          # Export new version to workflow outputs
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-            # Update package.json and package-lock.json
-            jq ".version = \"$NEW_VERSION\"" frontend/package.json > frontend/package.json.tmp && mv frontend/package.json.tmp frontend/package.json
-            jq ".version = \"$NEW_VERSION\"" frontend/package-lock.json > frontend/package-lock.json.tmp && mv frontend/package-lock.json.tmp frontend/package-lock.json
-
-
-      - name: Commit and push version bump
+      # 4️⃣ Commit changes
+      - name: Commit version bump
         run: |
           git config user.name "github-actions[version bot]"
           git config user.email "github-actions[version bot]@users.noreply.github.com"
           git add frontend/package.json frontend/package-lock.json
-          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}"
-          # Use GITHUB_TOKEN to authenticate
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dev
 
+      # 5️⃣ Create dev tag
       - name: Create Git Tag
         run: |
           NEW_TAG="v${{ steps.bump_version.outputs.new_version }}-dev"
           git tag $NEW_TAG
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_TAG
+
