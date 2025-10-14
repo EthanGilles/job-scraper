@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchJobs, fetchLogs, fetchStats } from "../api/api";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Briefcase, Building2, Clock, Activity, AlertTriangle, CheckCircle } from "lucide-react";
+import TopJobsCard from "../components/TopJobsCard";
 
 interface Stats {
   total_jobs: number;
@@ -93,6 +94,9 @@ export default function HomePage() {
         <p className="text-6xl font-bold text-[#466f5e]">{totalJobs}</p>
       </div>
 
+      {/* Filtered Top Jobs */}
+      <TopJobsCard />
+
       {/* Companies Scraped */}
       <div className="card flex flex-col items-center p-6 space-y-6">
         <Building2 size={60} className="text-[#6f732f]" />
@@ -121,20 +125,12 @@ export default function HomePage() {
         <p className="text-3xl font-bold text-[#466f5e]">{`${avgDuration}s`}</p>
       </div>
 
-      {/* Placeholder Metric */}
-      <div className="card flex flex-col items-center p-6">
-        <Activity size={48} className="mb-4 text-[#b38a58]" />
-        <h3 className="text-2xl font-semibold">Your Metric</h3>
-        <p className="text-3xl font-bold text-[#b38a58]">--</p>
-      </div>
-
       {/* Total Scrapes */}
       <div className="card flex flex-col items-center p-6">
         <Activity size={48} className="mb-4 text-[#b38a58]" />
         <h3 className="text-2xl font-semibold">Total Scrapes</h3>
         <p className="text-3xl font-bold text-[#b38a58]">{totalScrapes}</p>
       </div>
-
 
       {/* Warnings */}
       <div className="card flex flex-col items-center p-6">

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=poppins:wght@400;600;700&family=roboto:wght@400;500;700&family=playfair+display:wght@400;700&display=swap');
 
 :root {
   --bg-main: #f5f5f5;           /* page background */
@@ -9,9 +9,9 @@
   --accent-hover: #3c5233;      /* hover or secondary accent */
   --accent-light: #6f732f;      /* lighter accent */
 
-  --font-primary: 'Rubik', sans-serif;
-  --font-secondary: 'Roboto', sans-serif;
-  --font-heading: 'Playfair Display', serif;
+  --font-primary: 'rubik', sans-serif;
+  --font-secondary: 'roboto', sans-serif;
+  --font-heading: 'playfair display', serif;
 }
 
 body {
@@ -31,7 +31,7 @@ body {
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translatey(-4px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.2);
 }
 

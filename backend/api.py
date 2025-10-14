@@ -76,6 +76,51 @@ def jobs():
 
     return JSONResponse(content=data)
 
+# Top Jobs Endpoint
+@app.get("/top_jobs", response_class=JSONResponse)
+def top_jobs():
+    """
+    Returns a filtered list of jobs that match user-preferred keywords,
+    including which keywords matched for each job.
+    """
+    KEYWORDS = ["devops", "site reliability", "sre", "platform", "infrastructure"]
+    if not DATA_FILE.exists():
+        raise HTTPException(status_code=404, detail=f"{DATA_FILE} not found")
+
+    try:
+        with DATA_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        logger.exception(f"Error reading {DATA_FILE}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+    top_jobs_list = []
+
+    for company, jobs_list in data.items():
+        for job in jobs_list:
+            title = job.get("title", "").lower()
+            description = job.get("description", "").lower()
+
+            # Find which keywords matched
+            matched_keywords = [kw for kw in KEYWORDS if kw in title or kw in description]
+            if matched_keywords:
+                top_jobs_list.append({
+                    "company": company.capitalize(),
+                    "title": job.get("title"),
+                    "location": job.get("location"),
+                    "link": job.get("link"),
+                    "logo": job.get("logo") or f"/logos/{company.lower().replace(' ', '-')}.svg",
+                    "filters": matched_keywords  # <-- new field
+                })
+
+    # Sort by company name or title for consistency
+    top_jobs_list.sort(key=lambda x: (x["company"].lower(), x["title"].lower()))
+    return JSONResponse(content={
+        "count": len(top_jobs_list),
+        "jobs": top_jobs_list,
+        "keywords": KEYWORDS  # optional: include full filter list
+    })
+
 # Log endpoint
 @app.get("/logs", response_class=PlainTextResponse)
 def logs(lines: int = 500):

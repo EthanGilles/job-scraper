@@ -8,6 +8,7 @@ const companyLogos: Record<string, string> = {
   atlassian: "/logos/atlassian.svg",
   plaid: "/logos/plaid.svg",
   stripe: "/logos/stripe.svg",
+  datadog: "/logos/datadog.svg"
 };
 
 export default function JobsPage() {

@@ -19,3 +19,10 @@ export async function fetchStats() {
   if (!res.ok) throw new Error("Failed to fetch stats");
   return res.json();
 }
+
+export async function fetchTopJobs() {
+  const res = await fetch(`${API_BASE}/top_jobs`);
+  if (!res.ok) throw new Error("Failed to fetch top jobs");
+  return res.json();
+}
+
