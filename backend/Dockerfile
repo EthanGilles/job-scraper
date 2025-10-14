@@ -15,4 +15,5 @@ COPY backend/ .
 EXPOSE 8000
 
 # Default command
+ENV PYTHONPATH=/app
 CMD ["python", "-m", "backend.main"]
