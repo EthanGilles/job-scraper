@@ -3,7 +3,7 @@ name: Sync Dev After Prod Merge
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   sync-dev:
@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          ref: prod
+          ref: main
           fetch-depth: 0
 
       - name: Configure Git
@@ -24,7 +24,7 @@ jobs:
         run: |
           git fetch origin dev
           git checkout dev
-          git merge origin/prod --no-edit
+          git merge origin/main --no-edit
 
       - name: Push dev
         run: |
