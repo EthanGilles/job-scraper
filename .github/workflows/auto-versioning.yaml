@@ -50,9 +50,3 @@ jobs:
           git add frontend/package.json frontend/package-lock.json
           git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dev
-
-      - name: Create Git Tag
-        run: |
-          NEW_TAG="v${{ steps.bump_version.outputs.new_version }}-dev"
-          git tag $NEW_TAG
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_TAG
