@@ -1,0 +1,35 @@
+name: Production Tagging
+
+on:
+  push:
+    branches:
+      - main  # or prod
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Get current version
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' frontend/package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create production tag
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          git config user.name "github-actions[release bot]"
+          git config user.email "github-actions[release bot]@users.noreply.github.com"
+          git tag "v$VERSION"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v$VERSION"
