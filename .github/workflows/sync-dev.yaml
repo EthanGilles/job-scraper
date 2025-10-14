@@ -1,0 +1,32 @@
+name: Sync Dev After Prod Merge
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  sync-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          ref: prod
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Merge prod into dev
+        run: |
+          git fetch origin dev
+          git checkout dev
+          git merge origin/prod --no-edit
+
+      - name: Push dev
+        run: |
+          git push origin dev
+
