@@ -1,0 +1,78 @@
+name: Auto Versioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Type of version bump: major, minor, patch'
+        required: true
+        default: patch
+  push:
+    branches:
+      - dev
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Get current version
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' frontend/package.json)
+          echo "current_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          CURRENT=${{ steps.get_version.outputs.current_version }}
+          TYPE=${{ github.event.inputs.update_type }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          case "$TYPE" in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+            *)
+              echo "Invalid update_type: $TYPE"
+              exit 1
+              ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Bumping version from $CURRENT to $NEW_VERSION"
+
+          # Update package.json and package-lock.json
+          jq ".version = \"$NEW_VERSION\"" frontend/package.json > frontend/package.json.tmp && mv frontend/package.json.tmp frontend/package.json
+          jq ".version = \"$NEW_VERSION\"" frontend/package-lock.json > frontend/package-lock.json.tmp && mv frontend/package-lock.json.tmp frontend/package-lock.json
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/package.json frontend/package-lock.json
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git push origin dev
+
+      - name: Create Git Tag
+        run: |
+          NEW_TAG="v${{ steps.bump_version.outputs.new_version }}"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
