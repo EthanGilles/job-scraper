@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  OWNER: EthanGilles
+  OWNER: ethangilles
   BACKEND_IMAGE: job-watch-backend
   FRONTEND_IMAGE: job-watch-frontend
 
