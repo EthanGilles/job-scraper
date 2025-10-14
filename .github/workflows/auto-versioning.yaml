@@ -15,20 +15,19 @@ jobs:
   versioning:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout
+
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
+          ref: dev
 
-      # 2️⃣ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # 3️⃣ Bump version using npm
       - name: Bump version
         id: bump_version
         run: |
@@ -44,7 +43,6 @@ jobs:
           # Export new version to workflow outputs
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      # 4️⃣ Commit changes
       - name: Commit version bump
         run: |
           git config user.name "github-actions[version bot]"
@@ -53,10 +51,8 @@ jobs:
           git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dev
 
-      # 5️⃣ Create dev tag
       - name: Create Git Tag
         run: |
           NEW_TAG="v${{ steps.bump_version.outputs.new_version }}-dev"
           git tag $NEW_TAG
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_TAG
-
