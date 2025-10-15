@@ -1,18 +1,13 @@
-# Base image
 FROM python:3.12-slim
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements and install
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/requirements.txt backend/requirements.txt
+RUN python -m venv venv \
+    && ./venv/bin/pip install --no-cache-dir -r backend/requirements.txt
 
-# Copy backend code
-COPY backend/ .
+COPY backend/ backend/
 
-# Expose API port
 EXPOSE 8000
+CMD ["./venv/bin/python", "-m", "backend.main"]
 
-# Default command
-CMD ["python", "-m", "backend.main"]
