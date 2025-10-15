@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// @ts-ignore
-const API_BASE = window.RUNTIME_CONFIG?.API_URL || "/api";
+const API_BASE = window.RUNTIME_CONFIG.API_URL;
 
 export async function fetchJobs() {
   const res = await fetch(`${API_BASE}/jobs`);
