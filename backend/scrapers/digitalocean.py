@@ -54,5 +54,5 @@ def scrape_digitalocean():
                     "site": "digitalocean"
                 })
 
-    logger.info(f"[DigitalOcean] job listings found: {len(jobs)}")
+    logger.debug(f"[DigitalOcean] job listings found: {len(jobs)}")
     return jobs

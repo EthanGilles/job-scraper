@@ -6,7 +6,7 @@ from backend.logger import logger
 
 
 def scrape_stripe() -> List[Dict[str, Any]]:
-    logger.info(f"Scraping Stripe: {STRIPE_URL}")
+    logger.debug(f"Scraping Stripe: {STRIPE_URL}")
     r = safe_get(STRIPE_URL)
     if not r:
         return []
@@ -49,6 +49,6 @@ def scrape_stripe() -> List[Dict[str, Any]]:
                 "category": category
             })
 
-    logger.info(f"[Stripe] job listings found: {len(jobs)}")
+    logger.debug(f"[Stripe] job listings found: {len(jobs)}")
     return jobs
 

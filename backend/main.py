@@ -30,9 +30,8 @@ def main():
         action="store_true",
         help="Enable auto-reload (useful for development)"
     )
-    args = parser.parse_args()
 
-    logger.info(f"Starting Job Scraper API on {args.host}:{args.port} (reload={args.reload})")
+    args = parser.parse_args()
     uvicorn.run(app, host=args.host, port=args.port, reload=args.reload, log_level="info")
 
 

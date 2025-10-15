@@ -6,7 +6,7 @@ from backend.logger import logger
 
 def scrape_plaid():
     url = PLAID_URL
-    logger.info(f"Scraping Plaid: {url}")
+    logger.debug(f"Scraping Plaid: {url}")
     r = safe_get(url)
     soup = BeautifulSoup(r.text, "html.parser")
     jobs: List[Dict[str, str]] = []
@@ -40,5 +40,5 @@ def scrape_plaid():
         if not any(link == j.get("link") for j in jobs):
             jobs.append({"title": title, "location": location, "link": link, "category": "Engineering", "site": "plaid"})
 
-    logger.info(f"[Plaid] job listings found: {len(jobs)}")
+    logger.debug(f"[Plaid] job listings found: {len(jobs)}")
     return jobs

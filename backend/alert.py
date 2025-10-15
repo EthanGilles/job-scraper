@@ -33,7 +33,7 @@ def find_new_jobs_for_site(site: str, jobs: List[Dict], seen_store: Dict[str, Li
     stale_links = set(seen_by_link.keys()) - set(scraped_by_link.keys())
     if stale_links:
         for link in stale_links:
-            logger.info(f"Removing stale job from {site}: {seen_by_link[link].get('title', link)}")
+            logger.info(f"[{site}] Removing stale job: {seen_by_link[link].get('title', link)}")
 
     seen_store[site] = list(updated_seen.values())
 
@@ -51,7 +51,7 @@ def emailer(recpt, subject, mesg):
         server.starttls()
         server.login(GMAIL_SENDER, GMAIL_PASSWD)
         server.sendmail(GMAIL_SENDER, TO, BODY)
-        logger.info(f"Email sent to {ALERT_RECIPIENT}")
+        logger.debug(f"Email sent to {ALERT_RECIPIENT}")
     except Exception as e:
         logger.exception(f"Error sending email: {e}")
     finally:
@@ -62,7 +62,7 @@ def emailer(recpt, subject, mesg):
 
 def alert(all_new: Dict[str, List[Dict]]):
     if not any(all_new.values()):
-        logger.info("No new jobs to email.")
+        logger.debug("No new jobs to email.")
         return
     total_new = sum(len(jobs) for jobs in all_new.values() if jobs)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -77,4 +77,4 @@ def alert(all_new: Dict[str, List[Dict]]):
     message = "\n".join(lines)
     subject = f"Job Alert ({total_new} new job{'s' if total_new != 1 else ''}) - {timestamp}"
     emailer(ALERT_RECIPIENT, subject, message)
-    logger.info(f"Sent email with {total_new} total new jobs.")
+    logger.info(f"[Email] Sent with {total_new} total new jobs.")

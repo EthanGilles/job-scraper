@@ -4,16 +4,10 @@ from backend.config import FILTER_KEYWORDS, DATADOG_URL
 import requests
 
 def scrape_datadog() -> List[dict[str, str]]:
-    logger.info(f"Scraping Datadog careers API: {DATADOG_URL}")
+    logger.debug(f"Scraping Datadog careers API: {DATADOG_URL}")
 
-    try:
-        response = requests.get(DATADOG_URL, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-    except Exception as e:
-        logger.error(f"[Datadog] Request failed: {e}")
-        return []
-
+    r = safe_get(DATADOG_URL)
+    data = r.json()
     all_jobs = []
 
     for job in data.get("jobs", []):
@@ -68,6 +62,6 @@ def scrape_datadog() -> List[dict[str, str]]:
             "site": "datadog"
         })
 
-    logger.info(f"[Datadog] US Engineering / Early Career / Professional Services jobs found: {len(all_jobs)}")
+    logger.debug(f"[Datadog] US Engineering / Early Career / Professional Services jobs found: {len(all_jobs)}")
     return all_jobs
 
