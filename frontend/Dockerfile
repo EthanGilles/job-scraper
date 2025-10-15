@@ -22,7 +22,7 @@ COPY frontend/resources/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Add CA certificate
-COPY frontend/reousrces/homelab-ca.crt /usr/local/share/ca-certificates/homelab-ca.crt
+COPY frontend/resources/homelab-ca.crt /usr/local/share/ca-certificates/homelab-ca.crt
 RUN apk add --no-cache ca-certificates && update-ca-certificates
 
 # Expose port 80 for HTTP
