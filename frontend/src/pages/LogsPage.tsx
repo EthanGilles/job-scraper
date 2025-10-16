@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchLogs } from "../api/api";
 import LogViewer from "../components/LogViewer";
+import { BlinkBlur } from "react-loading-indicators";
 
 export default function LogsPage() {
   const { data, isLoading, error } = useQuery({
@@ -9,7 +10,12 @@ export default function LogsPage() {
     refetchInterval: 10000,
   });
 
-  if (isLoading) return <div>Loading logs...</div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-full min-h-[60vh]">
+        <BlinkBlur color="var(--accent-primary)" size="large" />
+      </div>
+    );
   if (error) return <div>Error loading logs: {(error as Error).message}</div>;
 
   const lines = data?.split("\n").reverse() ?? [];

@@ -27,7 +27,7 @@ def format_location(locations: list[str]) -> str:
 
 
 def scrape_atlassian():
-    logger.info(f"Scraping Atlassian API: {ATLASSIAN_URL}")
+    logger.debug(f"Scraping Atlassian API: {ATLASSIAN_URL}")
     url = ATLASSIAN_URL
     headers = {
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -55,9 +55,6 @@ def scrape_atlassian():
             continue
         if any(keyword.lower() in title.lower() for keyword in FILTER_KEYWORDS):
             continue
-        if not link:
-            logger.warning(f"[Atlassian] Skipping job with no apply link: {title} | locations={locations}")
-            continue
         if any(link == j.get("link") for j in jobs):
             continue
 
@@ -71,5 +68,5 @@ def scrape_atlassian():
             "site": "atlassian"
         })
 
-    logger.info(f"[Atlassian] Engineering jobs in US/Remote found: {len(jobs)}")
+    logger.debug(f"[Atlassian] Engineering jobs in US/Remote found: {len(jobs)}")
     return jobs

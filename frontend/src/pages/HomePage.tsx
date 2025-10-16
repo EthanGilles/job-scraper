@@ -2,7 +2,9 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchJobs, fetchLogs, fetchStats } from "../api/api";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { labelMarkClasses } from '@mui/x-charts/ChartsLabel';
 import { Briefcase, Building2, Clock, Activity, AlertTriangle, CheckCircle } from "lucide-react";
+import { TrophySpin, FourSquare, ThreeDot } from "react-loading-indicators";
 import TopJobsCard from "../components/TopJobsCard";
 
 interface Stats {
@@ -39,17 +41,6 @@ export default function HomePage() {
   const totalScrapes = stats?.total_scrapes ?? 0;
   const avgDuration = stats?.scrape_durations_seconds?.toFixed(2) ?? "0.00";
   const lastScrape = stats?.last_scrape ?? "N/A";
-
-  const formattedLastScrape =
-  lastScrape !== "N/A"
-    ? (() => {
-        const d = new Date(lastScrape);
-        const datePart = d.toLocaleDateString("en-US", { month: "long", day: "numeric" }); // October 12
-        const timePart = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }); // 10:44 PM
-        return `${datePart}\n\n${timePart}`; // newline between date and time
-      })()
-    : "N/A";
-
   const logText = logs ?? "";
   const warnings = logText.match(/WARNING/g)?.length ?? 0;
   const errors = logText.match(/ERROR/g)?.length ?? 0;
@@ -78,76 +69,108 @@ export default function HomePage() {
                 faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
               },
             ]}
+            slotProps={{
+              legend: {
+                sx: {
+                  fontSize: 14,
+                  color: 'var(--text-light)',
+                  [`.${labelMarkClasses.fill}`]: {
+                    fill: 'var(--accent-primary)',
+                  },
+                },
+              },
+            }}
             height={200}
             width={200}
           />
-
         ) : (
-          <p>No job data yet</p>
+          <div className="flex items-center justify-center w-full h-[200px]">
+            <FourSquare color="var(--accent-primary)" size="medium" />
+          </div>
         )}
       </div>
 
       {/* Jobs Found */}
-      <div className="card flex flex-col items-center p-6 space-y-6">
-        <Briefcase size={60} className="text-[#466f5e]" />
-        <h3 className="text-3xl font-semibold">Jobs Found</h3>
-        <p className="text-6xl font-bold text-[#466f5e]">{totalJobs}</p>
+      <div className="card flex flex-col items-center justify-center p-6 space-y-10 h-full">
+        {stats ? (
+          <p className="text-9xl font-bold text-[--accent-primary]">{totalJobs}</p>
+        ) : (
+          <TrophySpin color="var(--accent-primary)" size="large" />
+        )}
+        <h3 className="text-5xl font-semibold">Jobs Found</h3>
       </div>
 
       {/* Filtered Top Jobs */}
       <TopJobsCard />
 
       {/* Companies Scraped */}
-      <div className="card flex flex-col items-center p-6 space-y-6">
-        <Building2 size={60} className="text-[#6f732f]" />
+      <div className="card flex flex-col items-center p-6 space-y-4">
+        <Building2 size={55} className="text-[#6f732f]" />
         <h3 className="text-3xl font-semibold">Companies Scraped</h3>
-        <p className="text-6xl font-bold text-[#6f732f]">{totalCompanies}</p>
+        {stats ? (
+          <p className="text-5xl font-bold text-[#6f732f]">{totalCompanies}</p>
+        ) : (
+          <ThreeDot color="#6f732f" size="small" />
+        )}
       </div>
 
       {/* Last Scrape */}
-      <div className="card flex flex-col items-center p-6">
-        <Clock size={48} className="mb-4 text-[#6f732f]" />
-        <h3 className="text-2xl font-semibold">Last Scrape</h3>
+      <div className="card flex flex-col items-center p-6 space-y-4">
+        <Clock size={55} className="text-[#6f732f]" />
+        <h3 className="text-3xl font-semibold">Last Scrape</h3>
         {lastScrape !== "N/A" ? (
-          <p className="text-3xl font-bold text-[#6f732f] text-center">
+          <p className="text-4xl font-bold text-[#6f732f] text-center">
             {new Date(lastScrape).toLocaleDateString("en-US", { month: "long", day: "numeric" })}{" at "}
             {new Date(lastScrape).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
           </p>
         ) : (
-          <p className="text-3xl font-bold text-[#6f732f]">N/A</p>
+          <ThreeDot color="#6f732f" size="small" />
         )}
       </div>
 
       {/* Average Duration */}
-      <div className="card flex flex-col items-center p-6">
-        <Clock size={48} className="mb-4 text-[#466f5e]" />
-        <h3 className="text-2xl font-semibold">Avg. Scrape Duration</h3>
-        <p className="text-3xl font-bold text-[#466f5e]">{`${avgDuration}s`}</p>
+      <div className="card flex flex-col items-center p-6 space-y-4">
+        <Clock size={55} className="text-[#466f5e]" />
+        <h3 className="text-3xl font-semibold">Avg. Scrape Duration</h3>
+        {stats ? (
+          <p className="text-4xl font-bold text-[#466f5e]">{`${avgDuration}s`}</p>
+        ) : (
+          <ThreeDot color="#466f5e" size="small" />
+        )}
       </div>
 
       {/* Total Scrapes */}
       <div className="card flex flex-col items-center p-6">
         <Activity size={48} className="mb-4 text-[#b38a58]" />
-        <h3 className="text-2xl font-semibold">Total Scrapes</h3>
+        <h3 className="text-2xl mb-2 font-semibold">Total Scrapes</h3>
+        {stats ? (
         <p className="text-3xl font-bold text-[#b38a58]">{totalScrapes}</p>
+        ) : (
+          <ThreeDot color="#b38a58" size="small" />
+        )}
       </div>
 
       {/* Warnings */}
       <div className="card flex flex-col items-center p-6">
         <AlertTriangle size={48} className="mb-4 text-yellow-400" />
-        <h3 className="text-2xl font-semibold">Warnings</h3>
-        <p className="text-3xl font-bold text-yellow-400">{warnings}</p>
+        <h3 className="text-2xl mb-2 font-semibold">Warnings</h3>
+        {logs ? (
+          <p className="text-3xl font-bold text-yellow-400">{warnings}</p>
+        ) : (
+          <ThreeDot color="#f6e05e" size="small" />
+        )}
       </div>
 
       {/* Errors */}
       <div className="card flex flex-col items-center p-6">
         <CheckCircle size={48} className="mb-4 text-red-400" />
-        <h3 className="text-2xl font-semibold">Errors</h3>
-        <p className="text-3xl font-bold text-red-400">{errors}</p>
+        <h3 className="text-2xl mb-2 font-semibold">Errors</h3>
+        {logs ? (
+          <p className="text-3xl font-bold text-red-400">{errors}</p>
+        ) : (
+          <ThreeDot color="#fc8181" size="small" />
+        )}
       </div>
-
-
-
     </div>
   );
 }

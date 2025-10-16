@@ -30,26 +30,26 @@ export default function LogViewer({ logs }: LogViewerProps) {
     switch (keyword) {
       case "ERROR":
       case "WARNING":
-        return "text-black";
+        return "var(--log-text-alert)";
       case "INFO":
-        return "text-gray-500";
+        return "var(--log-text)";
       default:
-        return "text-gray-800";
+        return "var(--log-text)";
     }
   };
 
   const renderLine = (line: string) => {
     const match = line.match(/(ERROR|WARNING|INFO)/);
-    if (!match) return <span className="text-gray-800">{line}</span>;
+    if (!match) return <span style={{color: "var(--log-text-alert)"}}>{line}</span>;
 
     const keyword = match[0];
     const parts = line.split(keyword);
 
     return (
       <>
-        <span className={getRestTextColor(keyword)}>{parts[0]}</span>
+        <span style={{color: getRestTextColor(keyword)}}>{parts[0]}</span>
         <span className={getKeywordColor(keyword)}>{keyword}</span>
-        <span className={getRestTextColor(keyword)}>{parts[1]}</span>
+        <span style={{color: getRestTextColor(keyword)}}>{parts[1]}</span>
       </>
     );
   };
@@ -57,7 +57,11 @@ export default function LogViewer({ logs }: LogViewerProps) {
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-auto p-4 bg-white text-sm rounded-md font-mono"
+      className="flex-1 overflow-auto p-4 text-sm rounded-md font-mono transition-colors"
+      style={{
+        backgroundColor: "var(--log-bg)",
+        color: "var(--log-text)",
+      }}
     >
       {logs.map((line, idx) => (
         <div key={idx}>{renderLine(line)}</div>

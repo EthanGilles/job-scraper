@@ -1,14 +1,14 @@
-# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-0.8.0-blue?style=for-the-badge)
+# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-0.9.0-blue?style=for-the-badge)
 > Automated job scraper and monitoring dashboard 
 for tracking new software roles at select companies.
 
 ---
 ## Frontend Screenshots
 #### Dashboard View                                
-![Dashboard Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchhome.png) 
+![Dashboard Screenshot](https://github.com/EthanGilles/EthanGilles/blob/578a52d47ece3e59ee4f7f5a846b31b728556cdc/pics/jobwatchhome.png) 
 
 #### Job Cards
-![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/6e1a3fea0e881e49888331ece1bfaa0ae46db1ce/pics/jobwatchjobs.png)
+![Job Cards Screenshot](https://github.com/EthanGilles/EthanGilles/blob/578a52d47ece3e59ee4f7f5a846b31b728556cdc/pics/jobwatchjobs.png)
 
 ---
 ## Overview
@@ -21,6 +21,11 @@ exposes an API. The frontend dashboard visualizes current job postings, logs,
 and metrics, enabling users to track scrapes and view company-specific
 listings in a clean, interactive interface.
 
+Currently I have this application deployed on my Kubernetes homelab. 
+All of my [deployment manifests](https://github.com/EthanGilles/kube-homelab/tree/main/clusters/home/apps/jobwatch) are managed by FluxCD.
+In my cluster, JobWatch is monitored by Prometheus using a ServiceMonitor. 
+A Grafana dashboard for this application is a WIP.
+
 ---
 ## Features
 **Scraper**
@@ -29,6 +34,7 @@ listings in a clean, interactive interface.
     - Plaid
     - DigitalOcean
     - Atlassian
+    - Datadog
 - Filters out roles containing unwanted keywords like “Senior,” “Manager,” or “PhD.”
 - Maintains a record of seen jobs in jobs_seen.json
 - Runs continuously or manually, scraping 3× daily (8AM, 12PM, 5PM)
@@ -36,16 +42,16 @@ listings in a clean, interactive interface.
 - Uses .env for secure credential management
 **Backend (FastAPI)**
 - Exposes endpoints for:
-    - /jobs → Retrieve current job data (JSON)
-    - /logs → Retrieve recent scrape logs
-    - Provides Prometheus metrics (scrape count, duration, job totals)
-    - Supports integration with monitoring dashboards (Grafana, Prometheus)
+    - /jobs →  Retrieve current job data (JSON)
+    - /logs →  Retrieve recent scrape logs
+    - /metrics -> Provides Prometheus metrics (scrape count, duration, job totals, API metrics)
+    - /top_jobs-> Retrieve current jobs with an even more strict filter
+    - /health -> Provides an endpoint for Kubernetes liveness probes
 **Frontend (React + Vite)**
 - Dynamic dashboard showing:
     - Job listings organized by company
     - Real-time logs from backend
     - Scraping metrics and statistics
-    - Smooth carousel view for company cards
 - Built with React Query, Framer Motion, and Tailwind CSS
 
 ---
@@ -55,33 +61,12 @@ listings in a clean, interactive interface.
 | **Frontend** | React, Vite, Tailwind CSS, React Query |
 | **Backend** | FastAPI, Uvicorn, BeautifulSoup, Loguru, Requests |
 | **Email** | Gmail SMTP, python-dotenv |
-| **Monitoring** | Prometheus metric endpoint |
+| **Monitoring** | Prometheus metrics endpoint |
+| **Deployment** | Dockerfiles and dockercompose for local containerized testing. Kubernetes for the actual deployment |
+
 
 ---
-## Requirements
-
-**Python Backend:**
-
-Python Version:
-- Python 3.9+
-
-**Dependencies**:
-```
-pip install -r requirements.txt
-```
-
-**Frontend**:
-
-Node.js Version:
-- Node 18+
-
-**Dependencies**:
-```bash
-npm install react react-dom @tanstack/react-query framer-motion lucide-react tailwindcss @fontsource/rubik
-```
-
----
-## Setup
+## Local Testing/Setup
 
 1. Clone the repo
 
@@ -94,7 +79,7 @@ cd job-scraper
 
 Create a .env file in the backend folder (this keeps your credentials out of Git)
 ```bash
-touch ./backend/.env
+touch backend/.env
 ```
 
 Add the following:
@@ -105,17 +90,31 @@ ALERT_RECIPIENT="youremail@gmail.com"
 ```
 > You must create an App Password in your Google Account if you use 2FA.
 
-3. Run the backend
-```bash
-python -m backend.main
+3. Dependencies
+
+**Python Backend:**
+- Python 3.9+
+```
+cd backend
+python -m venv venv && source ./venv/bin/activate
+./venv/bin/pip install -r requirements.txt
 ```
 
-4. Run the frontend
+**React Frontend**:
+- Node 18+
 ```bash
 cd frontend
-npm start
+npm install
 ```
 
+4. Run the docker compose file
+```bash
+docker compose up --build
+```
+
+5. Access the application:
+
+The front end is exposed at `localhost:3000` and the API is at `localhost:8000`
 
 ---
 ## Emails

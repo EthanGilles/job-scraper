@@ -6,7 +6,7 @@ from backend.logger import logger
 
 def scrape_digitalocean():
     url = DIGITALOCEAN_URL # Found an embedded API and using my requests info for my session to get the JSON from it.
-    logger.info(f"Scraping DigitalOcean (Greenhouse embed API): {url}")
+    logger.debug(f"Scraping DigitalOcean (Greenhouse embed API): {url}")
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
@@ -34,7 +34,7 @@ def scrape_digitalocean():
             department_name = ""
             for meta in job.get("metadata", []):
                 if meta.get("name") == "Career Page Grouping":
-                    department_name = meta.get("value", "")
+                    department_name = meta.get("value") or ""
                     break
 
             if not any(dept in department_name for dept in ["AI, Engineering & Technology", "Security"]):
@@ -54,5 +54,5 @@ def scrape_digitalocean():
                     "site": "digitalocean"
                 })
 
-    logger.info(f"[DigitalOcean] job listings found: {len(jobs)}")
+    logger.debug(f"[DigitalOcean] job listings found: {len(jobs)}")
     return jobs

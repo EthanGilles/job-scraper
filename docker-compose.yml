@@ -6,8 +6,19 @@ services:
     container_name: jobwatch-backend
     ports:
       - "8000:8000"
+    environment:
+      TZ: "America/Denver"
+      ENVIRONMENT: "development"
     volumes:
       - ./backend:/app/backend
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     restart: unless-stopped
 
   frontend:
@@ -17,6 +28,14 @@ services:
     container_name: jobwatch-frontend
     ports:
       - "3000:80"
+    environment:
+      API_URL: "http://localhost:8000"
+      ENVIRONMENT: "development"
+    volumes:
+      - ./frontend/resources:/resources:ro
+    entrypoint: ["/resources/entrypoint.sh"]
+    command: ["nginx", "-g", "daemon off;"]
     depends_on:
       - backend
     restart: unless-stopped
+

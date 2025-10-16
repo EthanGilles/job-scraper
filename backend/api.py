@@ -54,7 +54,7 @@ def jobs():
     if run_check_once is None:
         raise HTTPException(status_code=500, detail="run_check_once not importable")
 
-    logger.info("API /jobs called, starting run_check_once()")
+    logger.info("[Scrape] API /jobs called, starting scrape")
 
     start = time.time()
     try:
@@ -62,11 +62,11 @@ def jobs():
         scrape_counter.inc()
         last_scrape_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # now updates the global
     except Exception as e:
-        logger.exception(f"Error while running run_check_once(): {e}")
+        logger.exception(f"[Scrape] Error while running scrape: {e}")
 
     duration = time.time() - start
     scrape_duration.observe(duration)
-    logger.info(f"Scrape finished in {duration:.2f}s")
+    logger.info(f"[Scrape] finished in {duration:.2f}s")
 
     if not DATA_FILE.exists():
         raise HTTPException(status_code=404, detail=f"{DATA_FILE} not found")
@@ -75,7 +75,7 @@ def jobs():
         with DATA_FILE.open("r", encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
-        logger.exception(f"Error reading {DATA_FILE}: {e}")
+        logger.exception(f"[State] Error reading {DATA_FILE}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
     return JSONResponse(content=data)
@@ -95,7 +95,7 @@ def top_jobs():
         with DATA_FILE.open("r", encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
-        logger.exception(f"Error reading {DATA_FILE}: {e}")
+        logger.exception(f"[State] Error reading {DATA_FILE}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
     top_jobs_list = []
@@ -139,7 +139,7 @@ def logs(lines: int = 500):
             all_lines = f.readlines()
         return "".join(all_lines[-lines:])
     except Exception as e:
-        logger.exception(f"Error reading log file {LOG_FILE}: {e}")
+        logger.exception(f"[Logs] Error reading log file {LOG_FILE}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Homepage Dashboard endpoint
@@ -155,7 +155,7 @@ def stats():
                 num_companies = len(data.keys())
                 total_jobs = sum(len(v) for v in data.values())
         except Exception as e:
-            logger.error(f"Failed to read {DATA_FILE}: {e}")
+            logger.error(f"[State] Failed to read {DATA_FILE}: {e}")
 
     # Directly read the counter value
     total_scrapes = int(scrape_counter._value.get())
@@ -183,5 +183,5 @@ def stats():
     }
 
 if __name__ == "__main__":
-    logger.info("Starting Job Scraper API")
+    logger.info("[Start] Starting Job Scraper API")
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False, log_level="info")

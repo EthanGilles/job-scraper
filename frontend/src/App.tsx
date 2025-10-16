@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "./components/Navbar";
@@ -9,15 +10,26 @@ import "./theme.css";
 const queryClient = new QueryClient();
 
 function App() {
+  const [darkMode, setDarkMode] = useState(() => {
+    const stored = localStorage.getItem("darkMode");
+    return stored ? JSON.parse(stored) : false;
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        {/* Outer container */}
         <div className="flex h-screen overflow-hidden bg-[var(--bg-main)]">
-          {/* Fixed navbar */}
-          <Navbar />
+          <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-          {/* Scrollable main content with margin to the right of the navbar */}
           <main className="flex-1 overflow-y-auto p-6 ml-64">
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -32,4 +44,3 @@ function App() {
 }
 
 export default App;
-

@@ -14,7 +14,7 @@ def safe_get(url: str, **kwargs):
         r.raise_for_status()
         return r
     except Exception as e:
-        logger.error(f"Request failed for {url}: {e}")
+        logger.error(f"[Scrape] Request failed for {url}: {e}")
         return None
 
 def load_seen() -> Dict[str, List[Dict]]:
@@ -24,7 +24,7 @@ def load_seen() -> Dict[str, List[Dict]]:
             if isinstance(data, dict):
                 return data
         except Exception as ex:
-            logger.warning(f"Failed to read {DATA_FILE}; starting fresh {ex}")
+            logger.warning(f"[State] Failed to read {DATA_FILE}; starting fresh {ex}")
     return {}
 
 def save_seen(data: Dict[str, List[Dict]]) -> None:
