@@ -91,6 +91,7 @@ ALERT_RECIPIENT="youremail@gmail.com"
 > You must create an App Password in your Google Account if you use 2FA.
 
 3. Dependencies
+
 **Python Backend:**
 - Python 3.9+
 ```
@@ -111,7 +112,8 @@ npm install
 docker compose up --build
 ```
 
-5. Access the application
+5. Access the application:
+
 The front end is exposed at `localhost:3000` and the API is at `localhost:8000`
 
 ---
