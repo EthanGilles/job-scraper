@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchJobs } from "../api/api";
 import JobList from "../components/JobList";
+import { Commet } from "react-loading-indicators";
 
-// Map each company to its logo (SVG, PNG, etc.)
 const companyLogos: Record<string, string> = {
   digitalocean: "/logos/digitalocean.svg",
   atlassian: "/logos/atlassian.svg",
@@ -15,10 +15,15 @@ export default function JobsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["jobs"],
     queryFn: fetchJobs,
-    refetchInterval: 300_000, // refresh every 5 min
+    refetchInterval: 900_000, // refresh every 5 min
   });
 
-  if (isLoading) return <div>Loading jobs...</div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-full min-h-[60vh]">
+        <Commet color="#466f5e" size="large" />
+      </div>
+    );
   if (error) return <div>Error loading jobs: {(error as Error).message}</div>;
 
   return (
@@ -35,4 +40,3 @@ export default function JobsPage() {
     </div>
   );
 }
-

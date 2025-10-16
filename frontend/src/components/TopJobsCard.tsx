@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTopJobs } from "../api/api";
 import { BriefcaseBusiness } from "lucide-react";
+import { Mosaic } from "react-loading-indicators";
 
 export default function TopJobsCard() {
   const { data, isLoading, error } = useQuery({
@@ -17,7 +18,12 @@ export default function TopJobsCard() {
     </div>
   );
 
-  if (isLoading) return LoadingOrError("Loading...");
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-full min-h-[60vh]">
+        <Mosaic color="#466f5e" size="large" />
+      </div>
+    );
   if (error || !data) return LoadingOrError("Error loading jobs");
 
   const jobs = data.jobs ?? [];
