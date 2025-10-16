@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchJobs, fetchLogs, fetchStats } from "../api/api";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { labelMarkClasses } from '@mui/x-charts/ChartsLabel';
 import { Briefcase, Building2, Clock, Activity, AlertTriangle, CheckCircle } from "lucide-react";
 import { TrophySpin, FourSquare, ThreeDot } from "react-loading-indicators";
 import TopJobsCard from "../components/TopJobsCard";
@@ -40,17 +41,6 @@ export default function HomePage() {
   const totalScrapes = stats?.total_scrapes ?? 0;
   const avgDuration = stats?.scrape_durations_seconds?.toFixed(2) ?? "0.00";
   const lastScrape = stats?.last_scrape ?? "N/A";
-
-  const formattedLastScrape =
-  lastScrape !== "N/A"
-    ? (() => {
-        const d = new Date(lastScrape);
-        const datePart = d.toLocaleDateString("en-US", { month: "long", day: "numeric" }); // October 12
-        const timePart = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }); // 10:44 PM
-        return `${datePart}\n\n${timePart}`; // newline between date and time
-      })()
-    : "N/A";
-
   const logText = logs ?? "";
   const warnings = logText.match(/WARNING/g)?.length ?? 0;
   const errors = logText.match(/ERROR/g)?.length ?? 0;
@@ -79,12 +69,23 @@ export default function HomePage() {
                 faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
               },
             ]}
+            slotProps={{
+              legend: {
+                sx: {
+                  fontSize: 14,
+                  color: 'var(--text-light)',
+                  [`.${labelMarkClasses.fill}`]: {
+                    fill: 'var(--accent-primary)',
+                  },
+                },
+              },
+            }}
             height={200}
             width={200}
           />
         ) : (
           <div className="flex items-center justify-center w-full h-[200px]">
-            <FourSquare color="#466f5e" size="medium" />
+            <FourSquare color="var(--accent-primary)" size="medium" />
           </div>
         )}
       </div>
@@ -92,9 +93,9 @@ export default function HomePage() {
       {/* Jobs Found */}
       <div className="card flex flex-col items-center justify-center p-6 space-y-10 h-full">
         {stats ? (
-          <p className="text-9xl font-bold text-[#466f5e]">{totalJobs}</p>
+          <p className="text-9xl font-bold text-[--accent-primary]">{totalJobs}</p>
         ) : (
-          <TrophySpin color="#466f5e" size="large" />
+          <TrophySpin color="var(--accent-primary)" size="large" />
         )}
         <h3 className="text-5xl font-semibold">Jobs Found</h3>
       </div>
@@ -170,9 +171,6 @@ export default function HomePage() {
           <ThreeDot color="#fc8181" size="small" />
         )}
       </div>
-
-
-
     </div>
   );
 }

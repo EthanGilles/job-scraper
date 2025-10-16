@@ -18,7 +18,7 @@ export default function JobList({ company, logo, jobs }: JobListProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="mb-8 card rounded-2xl border border-gray-100 bg-white">
+    <div className="mb-8 card rounded-2xl">
       {/* Company Header */}
       <div
         className="flex items-center justify-between mb-4 cursor-pointer p-4"
@@ -39,7 +39,10 @@ export default function JobList({ company, logo, jobs }: JobListProps) {
         <div className="flex items-center space-x-2">
           <span
             className="text-sm font-medium px-3 py-1 rounded-full"
-            style={{ backgroundColor: "#e7f0ec", color: "#466f5e" }}
+            style={{ 
+              backgroundColor: "var(--accent-light)",
+              color: "var(--text-secondary)",
+            }}
           >
             {jobs.length} {jobs.length === 1 ? "job" : "jobs"}
           </span>
@@ -53,7 +56,7 @@ export default function JobList({ company, logo, jobs }: JobListProps) {
       </div>
 
       {/* Divider Bar */}
-      <div className="h-[2px] bg-gray-200 mb-6"></div>
+      <div className="h-[2px] mb-6" style={{ backgroundColor: "var(--footer-border)" }}></div>
 
       {/* Jobs Grid */}
       <div
@@ -67,20 +70,12 @@ export default function JobList({ company, logo, jobs }: JobListProps) {
             href={job.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="card flex flex-col justify-between p-4 border border-gray-200
-                       bg-white transition-all duration-300 ease-out
-                       hover:bg-[#e7f0ec] hover:border-[#466f5e]"
+            className="job-card flex flex-col justify-between p-4 transition-all duration-300 ease-out"
           >
             <div>
-              <h3 className="font-semibold text-lg text-gray-800 break-words">
-                {job.title}
-              </h3>
-              {job.location && (
-                <p className="text-sm mt-1 text-gray-600 break-words">{job.location}</p>
-              )}
-              {job.category && (
-                <p className="text-sm mt-1 text-gray-500 break-words">{job.category}</p>
-              )}
+              <h3 className="font-semibold text-lg break-words">{job.title}</h3>
+              {job.location && <p className="text-sm mt-1 break-words">{job.location}</p>}
+              {job.category && <p className="text-sm mt-1 break-words">{job.category}</p>}
             </div>
           </a>
         ))}
@@ -88,4 +83,3 @@ export default function JobList({ company, logo, jobs }: JobListProps) {
     </div>
   );
 }
-
