@@ -26,7 +26,7 @@ DATADOG_URL = "https://api.greenhouse.io/v1/boards/datadog/jobs"
 FILTER_KEYWORDS = ["PhD", "Senior", "Staff", "Product", "Program", "Manager", 
                    "Principal", "Director", "Principle", "Head", "Distinguished",
                    "Marketing", "Accounting", "Salesforce", "Account", "CTO",
-                   ]
+                   "Sr", ]
 
 GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_PASSWD = os.getenv("GMAIL_PASSWD")
