@@ -13,7 +13,7 @@ export default function LogsPage() {
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-full min-h-[60vh]">
-        <BlinkBlur color="#466f5e" size="large" />
+        <BlinkBlur color="var(--accent-primary)" size="large" />
       </div>
     );
   if (error) return <div>Error loading logs: {(error as Error).message}</div>;

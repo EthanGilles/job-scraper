@@ -21,7 +21,7 @@ export default function JobsPage() {
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-full min-h-[60vh]">
-        <Commet color="#466f5e" size="large" />
+        <Commet color="var(--accent-primary)" size="large" />
       </div>
     );
   if (error) return <div>Error loading jobs: {(error as Error).message}</div>;

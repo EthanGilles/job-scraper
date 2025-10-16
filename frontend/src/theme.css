@@ -1,17 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=poppins:wght@400;600;700&family=roboto:wght@400;500;700&family=playfair+display:wght@400;700&display=swap');
 
 :root {
-  --bg-main: #f5f5f5;           /* page background */
-  --card-bg: #ffffff;           /* card background */
-  --text-light: #0d0d0d;        /* normal text */
-  --text-dark: #0d0d0d;         /* headings, etc. */
-  --accent-primary: #466f5e;    /* your main green color */
-  --accent-hover: #3c5233;      /* hover or secondary accent */
-  --accent-light: #6f732f;      /* lighter accent */
+  --bg-main: #f5f5f5;
+  --card-bg: #ffffff;
+
+  --text-light: #0d0d0d; /* used for text on light backgrounds */
+  --text-dark: #f5f5f5;  /* used for text on dark backgrounds */
+  --text-secondary: #466f5e;
+
+  --accent-primary: #466f5e;
+  --accent-hover: #3c5233;
+  --accent-light: #e7f0ec;
+
+  --navbar-bg: #ffffff;
+  --navbar-text: #0d0d0d;
+
+  --log-bg: #ffffff;
+  --log-text: #2d3748;
+  --log-text-alert: #000000;
 
   --font-primary: 'rubik', sans-serif;
   --font-secondary: 'roboto', sans-serif;
   --font-heading: 'playfair display', serif;
+
+  --footer-border: #e5e5e5;
+  --footer-bg: #ffffff;
+  --footer-text: #0d0d0d;
 }
 
 body {
@@ -20,6 +34,31 @@ body {
   color: var(--text-light);
   margin: 0;
   min-height: 100vh;
+}
+
+body.dark-mode {
+  /* Dark mode */
+  --bg-main: #1f1f1f;
+  --card-bg: #2a2a2a;
+
+  --text-light: #e0e0e0;
+  --text-dark: #ffffff;
+  --text-secondary: #e7f0ec;
+
+  --accent-primary: #3a5c4e;
+  --accent-hover: #3c5233;
+  --accent-light: #494d4b;
+
+  --navbar-bg: #2a2a2a;
+  --navbar-text: #e0e0e0;
+
+  --log-bg: #2a2a2a;
+  --log-text: #a0aec0;
+  --log-text-alert: #ffffff;
+
+  --footer-bg: #2a2a2a;
+  --footer-text: #f5f5f5;
+  --footer-border: #424242;
 }
 
 .card {
@@ -31,8 +70,37 @@ body {
 }
 
 .card:hover {
-  transform: translatey(-4px);
+  transform: translateY(-4px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+/* Job Cards */
+.job-card {
+  background-color: var(--card-bg);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  color: var(--text-light);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.job-card:hover {
+  border-color: var(--accent-primary);
+  background-color: var(--accent-light);
+  transform: translateY(-3px);
+}
+
+/* DARK MODE */
+body.dark-mode .job-card {
+  border-color: transparent;
+  color: var(--text-dark);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .job-card:hover {
+  border-color: var(--accent-primary);
+  background-color: var(--accent-light);
+  transform: translateY(-3px);
 }
 
 .scroll-snap-x {
