@@ -34,7 +34,7 @@ def scrape_digitalocean():
             department_name = ""
             for meta in job.get("metadata", []):
                 if meta.get("name") == "Career Page Grouping":
-                    department_name = meta.get("value", "")
+                    department_name = meta.get("value") or ""
                     break
 
             if not any(dept in department_name for dept in ["AI, Engineering & Technology", "Security"]):
