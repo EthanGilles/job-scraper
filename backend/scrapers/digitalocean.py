@@ -6,7 +6,7 @@ from backend.logger import logger
 
 def scrape_digitalocean():
     url = DIGITALOCEAN_URL # Found an embedded API and using my requests info for my session to get the JSON from it.
-    logger.info(f"Scraping DigitalOcean (Greenhouse embed API): {url}")
+    logger.debug(f"Scraping DigitalOcean (Greenhouse embed API): {url}")
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
