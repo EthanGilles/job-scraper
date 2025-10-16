@@ -1,6 +1,7 @@
 from typing import List
 from backend.logger import logger
 from backend.config import FILTER_KEYWORDS, DATADOG_URL
+from backend.utils import safe_get
 import requests
 
 def scrape_datadog() -> List[dict[str, str]]:
