@@ -13,9 +13,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter, Histogram, REGISTRY
 # run_check_once
 from backend.core import run_check_once
-
-DATA_FILE = Path("jobs-seen.json")
-LOG_FILE = Path("job-scraper.log")
+from backend.config import DATA_FILE, LOG_FILE
 
 app = FastAPI(title="Job Scraper API", version="1.0")
 

@@ -14,8 +14,8 @@ Keeps track of previously seen jobs in jobs-seen.json
 Alerts three times daily when new jobs appear.
 """
 
-DATA_FILE = Path("jobs-seen.json")
-LOG_FILE = Path("job-scraper.log")
+DATA_FILE = Path("/app/data/jobs-seen.json")
+LOG_FILE = Path("/app/data/logs/job-scraper.log")
 
 PLAID_URL = "https://plaid.com/careers/?department=Engineering#search"
 DIGITALOCEAN_URL = "https://api.greenhouse.io/v1/boards/digitalocean98/embed/departments"
