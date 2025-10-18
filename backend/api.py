@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, PlainTextResponse, FileResponse
-from pathlib import Path
 import json
 import time
 import uvicorn
+import redis
+import os
 from datetime import datetime
 from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,6 +15,16 @@ from prometheus_client import Counter, Histogram, REGISTRY
 # run_check_once
 from backend.core import run_check_once
 from backend.config import DATA_FILE, LOG_FILE
+
+# Redis config
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+JOBS_CACHE_KEY = "jobs_cache"
+TOP_JOBS_CACHE_KEY = "top_jobs_cache"
+STATS_CACHE_KEY = "stats_cache"
+CACHE_TTL_SECONDS = 30 * 60  # 30 minutes
+
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 app = FastAPI(title="Job Scraper API", version="1.0")
 
@@ -46,19 +57,25 @@ def health():
 @app.get("/jobs", response_class=JSONResponse)
 def jobs():
     """
-    Triggers run_check_once() and then returns the JSONfile that run_check_once updates.
+    Returns jobs JSON, caching results in Redis for 30 minutes
     """
-    global last_scrape_time 
-    if run_check_once is None:
-        raise HTTPException(status_code=500, detail="run_check_once not importable")
+    global last_scrape_time
+    # Try to get cached data
+    cached = r.get(JOBS_CACHE_KEY)
+    if cached:
+        logger.info("[Cache] Returning jobs from Redis cache")
+        return JSONResponse(content=json.loads(cached))
 
-    logger.info("[Scrape] API /jobs called, starting scrape")
+    # Delete our other cached info so its updates on a scrape
+    r.delete(TOP_JOBS_CACHE_KEY)
+    r.delete(STATS_CACHE_KEY)
 
+    logger.info("[Scrape] No cache found, running scrape")
     start = time.time()
     try:
         run_check_once()
         scrape_counter.inc()
-        last_scrape_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # now updates the global
+        last_scrape_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     except Exception as e:
         logger.exception(f"[Scrape] Error while running scrape: {e}")
 
@@ -69,22 +86,22 @@ def jobs():
     if not DATA_FILE.exists():
         raise HTTPException(status_code=404, detail=f"{DATA_FILE} not found")
 
-    try:
-        with DATA_FILE.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-    except Exception as e:
-        logger.exception(f"[State] Error reading {DATA_FILE}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    with DATA_FILE.open("r", encoding="utf-8") as f:
+        data = json.load(f)
 
+    # Add to cache
+    r.setex(JOBS_CACHE_KEY, CACHE_TTL_SECONDS, json.dumps(data))
     return JSONResponse(content=data)
+
 
 # Top Jobs Endpoint
 @app.get("/top_jobs", response_class=JSONResponse)
 def top_jobs():
-    """
-    Returns a filtered list of jobs that match user-preferred keywords,
-    including which keywords matched for each job.
-    """
+    cached = r.get(TOP_JOBS_CACHE_KEY)
+    if cached:
+        logger.info("[Cache] Returning top jobs from Redis cache")
+        return JSONResponse(content=json.loads(cached))
+
     KEYWORDS = ["devops", "site reliability", "sre", "platform", "infrastructure"]
     if not DATA_FILE.exists():
         raise HTTPException(status_code=404, detail=f"{DATA_FILE} not found")
@@ -102,8 +119,6 @@ def top_jobs():
         for job in jobs_list:
             title = job.get("title", "").lower()
             description = job.get("description", "").lower()
-
-            # Find which keywords matched
             matched_keywords = [kw for kw in KEYWORDS if kw in title or kw in description]
             if matched_keywords:
                 top_jobs_list.append({
@@ -112,16 +127,18 @@ def top_jobs():
                     "location": job.get("location"),
                     "link": job.get("link"),
                     "logo": job.get("logo") or f"/logos/{company.lower().replace(' ', '-')}.svg",
-                    "filters": matched_keywords  # <-- new field
+                    "filters": matched_keywords
                 })
 
-    # Sort by company name or title for consistency
     top_jobs_list.sort(key=lambda x: (x["company"].lower(), x["title"].lower()))
-    return JSONResponse(content={
+    result = {
         "count": len(top_jobs_list),
         "jobs": top_jobs_list,
-        "keywords": KEYWORDS  # optional: include full filter list
-    })
+        "keywords": KEYWORDS
+    }
+
+    r.setex(TOP_JOBS_CACHE_KEY, CACHE_TTL_SECONDS, json.dumps(result))
+    return JSONResponse(content=result)
 
 # Log endpoint
 @app.get("/logs", response_class=PlainTextResponse)
@@ -143,6 +160,14 @@ def logs(lines: int = 500):
 # Homepage Dashboard endpoint
 @app.get("/stats")
 def stats():
+    """
+    Returns stats used on the homepage dashboard of the app
+    """
+    cached = r.get(STATS_CACHE_KEY)
+    if cached:
+        logger.info("[Cache] Returning stats from Redis cache")
+        return JSONResponse(content=json.loads(cached))
+
     num_companies = 0
     total_jobs = 0
 
@@ -155,13 +180,10 @@ def stats():
         except Exception as e:
             logger.error(f"[State] Failed to read {DATA_FILE}: {e}")
 
-    # Directly read the counter value
     total_scrapes = int(scrape_counter._value.get())
 
-    # Compute average from histogram samples
     avg_duration = 0.0
     for metric in scrape_duration.collect():
-        # metric.samples is a list of tuples: (name, labels, value)
         sum_val = None
         count_val = None
         for sample in metric.samples:
@@ -172,13 +194,17 @@ def stats():
         if sum_val is not None and count_val:
             avg_duration = sum_val / count_val
 
-    return {
+    result = {
         "total_jobs": total_jobs,
         "companies": num_companies,
         "total_scrapes": total_scrapes,
         "scrape_durations_seconds": round(avg_duration, 2),
         "last_scrape": last_scrape_time or "N/A"
     }
+
+    # Cache the result
+    r.setex(STATS_CACHE_KEY, CACHE_TTL_SECONDS, json.dumps(result))
+    return JSONResponse(content=result)
 
 if __name__ == "__main__":
     logger.info("[Start] Starting Job Scraper API")
