@@ -33,7 +33,8 @@ app.add_middleware(
     allow_origins=[
         "https://jobwatch.dev.homelab",
         "https://jobwatch.homelab",
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://jobwatch.ethan-fullstack.dev",
     ],
     allow_credentials=True,
     allow_methods=["*"],
