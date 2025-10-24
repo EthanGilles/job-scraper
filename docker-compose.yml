@@ -9,6 +9,8 @@ services:
     environment:
       TZ: "America/Denver"
       ENVIRONMENT: "development"
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
     volumes:
       - ./backend:/app/backend
       - /etc/localtime:/etc/localtime:ro
@@ -20,6 +22,8 @@ services:
       retries: 3
       start_period: 15s
     restart: unless-stopped
+    depends_on:
+      - redis
 
   frontend:
     build:
@@ -39,3 +43,10 @@ services:
       - backend
     restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    container_name: jobwatch-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", '""', "--appendonly", "no"]
+    restart: unless-stopped
