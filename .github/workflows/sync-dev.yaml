@@ -20,13 +20,16 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Merge prod into dev
+      - name: Reset dev to main
         run: |
           git fetch origin dev
-          git checkout dev
-          git merge origin/main --no-edit
+          if git show-ref --verify --quiet refs/heads/dev; then
+            git checkout dev
+          else
+            git checkout -b dev
+          fi
+          git reset --hard origin/main
 
-      - name: Push dev
+      - name: Force push dev
         run: |
-          git push origin dev
-
+          git push origin dev --force
