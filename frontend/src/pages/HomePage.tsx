@@ -14,8 +14,11 @@ interface Stats {
   scrape_durations_seconds: number;
   last_scrape: string;
 }
+interface HomePageProps {
+  darkMode: boolean;
+}
 
-export default function HomePage() {
+export default function HomePage({ darkMode }: HomePageProps) {
   const { data: stats } = useQuery<Stats>({
     queryKey: ["stats"],
     queryFn: async () => {
@@ -101,7 +104,7 @@ export default function HomePage() {
       </div>
 
       {/* Filtered Top Jobs */}
-      <TopJobsCard />
+      <TopJobsCard darkMode={darkMode} />
 
       {/* Companies Scraped */}
       <div className="card flex flex-col items-center p-6 space-y-4">
