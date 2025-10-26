@@ -2,8 +2,13 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTopJobs } from "../api/api";
 import { Mosaic } from "react-loading-indicators";
+import { getCompanyLogo } from "../utils/logos";
 
-export default function TopJobsCard() {
+interface TopJobsCardProps {
+  darkMode: boolean;
+}
+
+export default function TopJobsCard({ darkMode }: TopJobsCardProps) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["top_jobs"],
     queryFn: fetchTopJobs,
@@ -65,21 +70,17 @@ export default function TopJobsCard() {
               rel="noopener noreferrer"
               className="job-card flex flex-col justify-between p-4 transition-all duration-300 ease-out hover:border hover:border-[var(--accent-primary)] hover:bg-[var(--accent-light)] rounded-xl"
             >
-              {job.logo && (
+              {job.company && (
                 <img
-                  src={job.logo}
+                  src={getCompanyLogo(job.company, darkMode)}
                   alt={`${job.company} logo`}
                   className="h-10 w-auto mb-3 object-contain self-start"
                 />
               )}
               <div>
                 <h3 className="font-semibold text-lg break-words">{job.title}</h3>
-                {job.company && (
-                  <p className="text-sm mt-1 break-words">{job.company}</p>
-                )}
-                {job.location && (
-                  <p className="text-sm mt-1 break-words">{job.location}</p>
-                )}
+                {job.company && <p className="text-sm mt-1 break-words">{job.company}</p>}
+                {job.location && <p className="text-sm mt-1 break-words">{job.location}</p>}
               </div>
             </a>
           ))}

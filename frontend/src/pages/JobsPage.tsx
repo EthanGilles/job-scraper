@@ -2,20 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchJobs } from "../api/api";
 import JobList from "../components/JobList";
 import { Commet } from "react-loading-indicators";
+import { getCompanyLogo } from "../utils/logos";
 
-const companyLogos: Record<string, string> = {
-  digitalocean: "/logos/digitalocean.svg",
-  atlassian: "/logos/atlassian.svg",
-  plaid: "/logos/plaid.svg",
-  stripe: "/logos/stripe.svg",
-  datadog: "/logos/datadog.svg"
-};
+interface JobsPageProps {
+  darkMode: boolean;
+}
 
-export default function JobsPage() {
+export default function JobsPage({ darkMode }: JobsPageProps) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["jobs"],
     queryFn: fetchJobs,
-    refetchInterval: 900_000, // refresh every 5 min
+    refetchInterval: 900_000,
   });
 
   if (isLoading)
@@ -24,6 +21,7 @@ export default function JobsPage() {
         <Commet color="var(--accent-primary)" size="large" />
       </div>
     );
+
   if (error) return <div>Error loading jobs: {(error as Error).message}</div>;
 
   return (
@@ -33,7 +31,7 @@ export default function JobsPage() {
           <JobList
             key={company}
             company={company}
-            logo={companyLogos[company.toLowerCase()]} // step 3: pass logo dynamically
+            logo={getCompanyLogo(company, darkMode)}
             jobs={jobs as any[]}
           />
         ))}

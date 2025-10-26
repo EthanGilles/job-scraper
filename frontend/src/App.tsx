@@ -32,8 +32,8 @@ function App() {
 
           <main className="flex-1 overflow-y-auto p-6 ml-64">
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/jobs" element={<JobsPage />} />
+              <Route path="/" element={<HomePage darkMode={darkMode} />} />
+              <Route path="/jobs" element={<JobsPage darkMode={darkMode} />} />
               <Route path="/logs" element={<LogsPage />} />
             </Routes>
           </main>

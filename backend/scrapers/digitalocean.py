@@ -28,7 +28,7 @@ def scrape_digitalocean():
             if not title or not link:
                 continue
 
-            if not any(city in location_name.lower() for city in ["denver", "seattle", "boston", "austin"]):
+            if not any(city in location_name.lower() for city in ["denver"]):
                 continue
 
             department_name = ""
