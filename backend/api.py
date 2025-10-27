@@ -11,7 +11,7 @@ from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 # Prometheus metrics
 from prometheus_fastapi_instrumentator import Instrumentator
-from prometheus_client import Counter, Histogram, REGISTRY
+from prometheus_client import Counter, Histogram, REGISTRY, Gauge
 # run_check_once
 from backend.core import run_check_once
 from backend.config import DATA_FILE, LOG_FILE
@@ -45,6 +45,13 @@ app.add_middleware(
 scrape_counter = Counter("job_scrapes_total", "Total number of scrapes triggered via API")
 scrape_duration = Histogram("job_scrape_duration_seconds", "Duration of job scrapes triggered via API (seconds)")
 last_scrape_time = None  # global variable to store last scrape
+jobs_total_gauge = Gauge("jobs_total", "Total jobs available")
+jobs_added_gauge = Gauge("jobs_added_since_last_scrape", "Number of jobs added since last scrape")
+avg_job_length_gauge = Gauge("avg_job_length_characters", "Average job posting length (title + description)")
+jobs_per_company_gauge = Gauge("jobs_per_company", "Number of jobs per company", ["company"])
+jobs_per_keyword_gauge = Gauge("jobs_per_keyword", "Number of jobs matching keywords", ["keyword"])
+jobs_per_location_gauge = Gauge("jobs_per_location", "Number of jobs per city/country", ["location"])
+
 
 # Metrics endpoint
 Instrumentator().instrument(app).expose(app, endpoint="/metrics")
@@ -59,15 +66,21 @@ def health():
 def jobs():
     """
     Returns jobs JSON, caching results in Redis for 30 minutes
+    Also updates Prometheus metrics:
+        - total jobs
+        - jobs added since last scrape
+        - average job length (title + description)
+        - jobs per company
+        - jobs per keyword
+        - jobs per location
     """
     global last_scrape_time
-    # Try to get cached data
+
     cached = r.get(JOBS_CACHE_KEY)
     if cached:
         logger.info("[Cache] Returning jobs from Redis cache")
         return JSONResponse(content=json.loads(cached))
 
-    # Delete our other cached info so its updates on a scrape
     r.delete(TOP_JOBS_CACHE_KEY)
     r.delete(STATS_CACHE_KEY)
 
@@ -90,7 +103,47 @@ def jobs():
     with DATA_FILE.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
-    # Add to cache
+    total_jobs = sum(len(jobs_list) for jobs_list in data.values())
+
+    previous_total_jobs = r.get("previous_total_jobs")
+    previous_total_jobs = int(previous_total_jobs) if previous_total_jobs else total_jobs
+    jobs_added = total_jobs - previous_total_jobs
+    r.set("previous_total_jobs", total_jobs)  # store current total for next scrape
+
+    job_lengths = []
+    company_counts = {}
+    locations = {}
+    keyword_counts = {"devops": 0, "site reliability": 0, "sre": 0, "platform": 0, "infrastructure": 0}
+
+    for company, jobs_list in data.items():
+        company_counts[company] = len(jobs_list)
+        for job in jobs_list:
+            title = job.get("title", "")
+            desc = job.get("description", "")
+            job_lengths.append(len(title) + len(desc))
+
+            location = job.get("location", "Unknown")
+            locations[location] = locations.get(location, 0) + 1
+
+            for kw in keyword_counts.keys():
+                if kw in (title + desc).lower():
+                    keyword_counts[kw] += 1
+
+    avg_length = sum(job_lengths) / len(job_lengths) if job_lengths else 0
+
+    jobs_total_gauge.set(total_jobs)
+    jobs_added_gauge.set(jobs_added)
+    avg_job_length_gauge.set(avg_length)
+
+    for company, count in company_counts.items():
+        jobs_per_company_gauge.labels(company=company).set(count)
+
+    for kw, count in keyword_counts.items():
+        jobs_per_keyword_gauge.labels(keyword=kw).set(count)
+
+    for location, count in locations.items():
+        jobs_per_location_gauge.labels(location=location).set(count)
+
     r.setex(JOBS_CACHE_KEY, CACHE_TTL_SECONDS, json.dumps(data))
     return JSONResponse(content=data)
 
