@@ -45,3 +45,14 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:${{ github.ref_name }}
+
+      - name: Trigger update in flux repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.FLUX_REPO_PAT }}
+          repository: ethangilles/kube-homelab
+          event-type: update-jobwatch-deploy
+          client-payload: |
+            {
+              "branch": "${{ github.ref_name }}"
+            }
