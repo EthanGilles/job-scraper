@@ -1,4 +1,4 @@
-# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-0.9.11-blue?style=for-the-badge)
+# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-0.9.12-blue?style=for-the-badge)
 > Automated job scraper and monitoring dashboard 
 for tracking new software roles at select companies.
 
