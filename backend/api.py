@@ -53,6 +53,14 @@ jobs_per_keyword_gauge = Gauge("jobs_per_keyword", "Number of jobs matching keyw
 jobs_per_location_gauge = Gauge("jobs_per_location", "Number of jobs per city/country", ["location"])
 
 
+
+REGISTRY.register(jobs_total_gauge)
+REGISTRY.register(jobs_added_gauge)
+REGISTRY.register(avg_job_length_gauge)
+REGISTRY.register(jobs_per_company_gauge)
+REGISTRY.register(jobs_per_keyword_gauge)
+REGISTRY.register(jobs_per_location_gauge)
+
 # Metrics endpoint
 Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 

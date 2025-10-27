@@ -141,9 +141,13 @@ Plaid - 3 new job(s)
 ---
 ## Monitoring and metrics
 JobWatch exposes Prometheus metrics such as:
-- job_scrapes_total → Total scrapes executed
-- job_scrape_duration_seconds → Scrape duration histogram
-- job_scrapes_created → Latest scrape timestamp
+- job_scrapes_total →  Total scrapes executed
+- job_scrape_duration_seconds →  Scrape duration histogram
+- job_scrapes_created →  Latest scrape timestamp
+- jobs_total -> Total amount of jobs
+- jobs_added_since_last_scrape -> New jobs found since the last scrape
+- avg_job_length_characters -> Shows the average characters in job titles and descriptions
+- jobs_per_company -> Number of jobs per company
 Integrate with Prometheus or Grafana for real-time monitoring.
 
 ---
