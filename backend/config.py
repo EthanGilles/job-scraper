@@ -23,11 +23,13 @@ STRIPE_URL = "https://stripe.com/jobs/search?teams=Infrastructure+%26+Corporate+
 ATLASSIAN_URL = "https://www.atlassian.com/endpoint/careers/listings"
 DATADOG_URL = "https://api.greenhouse.io/v1/boards/datadog/jobs"
 DATBRICKS_URL = "https://www.databricks.com/careers-assets/page-data/company/careers/open-positions/page-data.json"
+VISA_URL = "https://search.visa.com/CAREERS/careers/jobs?q="
 
 FILTER_KEYWORDS = ["PhD", "Senior", "Staff", "Product", "Program", "Manager", 
                    "Principal", "Director", "Principle", "Head", "Distinguished",
                    "Marketing", "Accounting", "Salesforce", "Account", "CTO",
-                   "Sr", "Commercial", "Executive Assistant", "Capital Markets"]
+                   "Sr", "Commercial", "Executive Assistant", "Capital Markets",
+                   "Lead", "Chief"]
 
 GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_PASSWD = os.getenv("GMAIL_PASSWD")
