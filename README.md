@@ -35,6 +35,8 @@ A Grafana dashboard for this application is a WIP.
     - DigitalOcean
     - Atlassian
     - Datadog
+    - Databricks
+    - Visa
 - Filters out roles containing unwanted keywords like “Senior,” “Manager,” or “PhD.”
 - Maintains a record of seen jobs in jobs_seen.json
 - Runs continuously or manually, scraping 3× daily (8AM, 12PM, 5PM)
