@@ -2,6 +2,8 @@
 > Automated job scraper and monitoring dashboard 
 for tracking new software roles at select companies.
 
+[My Self Hosted Instance](https://jobwatch.ethan-fullstack.dev/)
+
 ---
 ## Frontend Screenshots
 #### Dashboard View                                
