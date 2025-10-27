@@ -52,8 +52,6 @@ jobs_per_company_gauge = Gauge("jobs_per_company", "Number of jobs per company",
 jobs_per_keyword_gauge = Gauge("jobs_per_keyword", "Number of jobs matching keywords", ["keyword"])
 jobs_per_location_gauge = Gauge("jobs_per_location", "Number of jobs per city/country", ["location"])
 
-
-
 REGISTRY.register(jobs_total_gauge)
 REGISTRY.register(jobs_added_gauge)
 REGISTRY.register(avg_job_length_gauge)
@@ -62,7 +60,12 @@ REGISTRY.register(jobs_per_keyword_gauge)
 REGISTRY.register(jobs_per_location_gauge)
 
 # Metrics endpoint
-Instrumentator().instrument(app).expose(app, endpoint="/metrics")
+instrumentator = Instrumentator()
+instrumentator.instrument(app).expose(app, endpoint="/metrics", should_group_status_codes=False)
+instrumentator.add(
+    lambda: [jobs_total_gauge, jobs_added_gauge, avg_job_length_gauge, jobs_per_company_gauge, jobs_per_keyword_gauge, jobs_per_location_gauge], 
+    name="custom_job_metrics"
+)
 
 # Healthcheck endpoint
 @app.get("/health")
