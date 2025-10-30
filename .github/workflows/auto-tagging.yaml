@@ -25,6 +25,7 @@ jobs:
         run: |
           VERSION=$(jq -r '.version' frontend/package.json)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
 
       - name: Create production tag
         run: |
@@ -33,3 +34,15 @@ jobs:
           git config user.email "github-actions[release bot]@users.noreply.github.com"
           git tag "v$VERSION"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v$VERSION"
+
+      - name: Trigger production build and push
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GHCR_PAT }}
+          repository: ${{ github.repository }}
+          event-type: prod-build-and-push
+          client-payload: |
+            {
+              "branch": "main",
+              "version": "${{ steps.get_version.outputs.version }}"
+            }

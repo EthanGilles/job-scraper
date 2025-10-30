@@ -24,6 +24,7 @@ FILTER_DEPARTMENTS = [
     "Marketing & Communications", 
     "Business Development", 
     "Data Science/Data Engineering", 
+    "Human Resources", 
 ]
 
 def fetch_visa_page(page: int = 1, page_size: int = 1000) -> Dict[str, Any]:
