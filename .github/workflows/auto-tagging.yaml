@@ -41,7 +41,6 @@ jobs:
           token: ${{ secrets.JOBWATCH_REPO_PAT }}
           repository: ethangilles/job-scraper
           event-type: build-and-push
-          ref: main
           client-payload: |
             {
               "branch": "main",
