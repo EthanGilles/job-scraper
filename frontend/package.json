@@ -1,6 +1,6 @@
 {
   "name": "JobWatch",
-  "version": "0.9.12",
+  "version": "0.9.13",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
