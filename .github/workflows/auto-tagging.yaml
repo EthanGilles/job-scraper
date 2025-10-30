@@ -38,7 +38,7 @@ jobs:
       - name: Trigger production build and push
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.GHCR_PAT }}
+          token: ${{ secrets.JOBWATCH_REPO_PAT }}
           repository: ${{ github.repository }}
           event-type: prod-build-and-push
           client-payload: |
