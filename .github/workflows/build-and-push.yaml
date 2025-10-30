@@ -2,7 +2,7 @@ name: Build and Push Docker Images
 
 on:
   repository_dispatch:
-    types: [build-and-push, prod-build-and-push]
+    types: [build-and-push]
 
 env:
   REGISTRY: ghcr.io
