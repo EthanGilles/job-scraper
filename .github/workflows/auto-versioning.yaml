@@ -61,3 +61,6 @@ jobs:
     with:
       branch: dev
       version: ${{ needs.versioning.outputs.new_version }}
+    secrets:
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
+      FLUX_REPO_PAT: ${{ secrets.FLUX_REPO_PAT }}
