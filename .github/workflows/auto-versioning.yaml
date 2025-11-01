@@ -55,7 +55,7 @@ jobs:
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dev
 
       - name: Trigger build and push
-        uses: ./.github/workflows/build-and-push.yml
+        uses: ethangilles/job-scraper/.github/workflows/build-and-push.yml@dev
         with:
           branch: dev
           version: ${{ steps.bump_version.outputs.new_version }}
