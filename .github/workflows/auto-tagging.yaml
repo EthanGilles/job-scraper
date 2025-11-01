@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -35,9 +37,12 @@ jobs:
           git tag "v$VERSION"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v$VERSION"
 
-      - name: Trigger build and push
-        uses: ethangilles/job-scraper/.github/workflows/build-and-push.yml@main
-        with:
-          branch: main
-          version: ${{ steps.bump_version.outputs.new_version }}
-
+  build:
+    needs: release
+    uses: ethangilles/job-scraper/.github/workflows/build-and-push.yaml@main
+    with:
+      branch: main
+      version: ${{ needs.release.outputs.version }}
+    secrets:
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
+      FLUX_REPO_PAT: ${{ secrets.FLUX_REPO_PAT }}

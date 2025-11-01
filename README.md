@@ -29,6 +29,11 @@ In my cluster, JobWatch is monitored by Prometheus using a ServiceMonitor.
 A Grafana dashboard for this application is a WIP.
 
 ---
+## CI/CD Pipeline
+
+![JobWatch CI/CD Flowchart](https://github.com/EthanGilles/EthanGilles/blob/de9aebd5f1b916edf6f4c46b5066360ed463b4d4/homelab-diagrams/JobWatch%20CI_CD.svg)
+
+---
 ## Features
 **Scraper**
 - Gathers jobs from multiple companies:
