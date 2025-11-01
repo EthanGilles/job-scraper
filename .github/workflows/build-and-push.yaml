@@ -2,6 +2,11 @@ name: Build and Push Docker Images
 
 on:
   workflow_call:
+    secrets:
+      GHCR_PAT:
+        required: true
+      FLUX_REPO_PAT:
+        required: true
     inputs:
       branch:
         required: true
