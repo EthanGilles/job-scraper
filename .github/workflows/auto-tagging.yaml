@@ -35,14 +35,9 @@ jobs:
           git tag "v$VERSION"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v$VERSION"
 
-      - name: Trigger production build and push
-        uses: peter-evans/repository-dispatch@v3
+      - name: Trigger build and push
+        uses: ./.github/workflows/build-and-push.yml
         with:
-          token: ${{ secrets.JOBWATCH_REPO_PAT }}
-          repository: ethangilles/job-scraper
-          event-type: build-and-push
-          client-payload: |
-            {
-              "branch": "main",
-              "version": "${{ steps.get_version.outputs.version }}"
-            }
+          branch: main
+          version: ${{ steps.bump_version.outputs.new_version }}
+

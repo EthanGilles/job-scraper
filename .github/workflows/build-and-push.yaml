@@ -1,8 +1,14 @@
 name: Build and Push Docker Images
 
 on:
-  repository_dispatch:
-    types: [build-and-push]
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io

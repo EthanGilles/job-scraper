@@ -54,14 +54,8 @@ jobs:
           git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dev
 
-      - name: Trigger build-and-push
-        uses: peter-evans/repository-dispatch@v3
+      - name: Trigger build and push
+        uses: ./.github/workflows/build-and-push.yml
         with:
-          token: ${{ secrets.JOBWATCH_REPO_PAT }}
-          repository: ethangilles/job-scraper
-          event-type: build-and-push
-          client-payload: |
-            {
-              "branch": "dev",
-              "version": "${{ steps.bump_version.outputs.new_version }}"
-            }
+          branch: dev
+          version: ${{ steps.bump_version.outputs.new_version }}
