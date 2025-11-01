@@ -57,7 +57,7 @@ jobs:
 
   build:
     needs: versioning
-    uses: ethangilles/job-scraper/.github/workflows/build-and-push.yml@dev
+    uses: ethangilles/job-scraper/.github/workflows/build-and-push.yaml@dev
     with:
       branch: dev
       version: ${{ needs.versioning.outputs.new_version }}
