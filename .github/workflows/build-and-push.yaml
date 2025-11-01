@@ -20,25 +20,14 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout correct branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
 
-      - name: Extract version and branch
-        id: meta
+      - name: Log input info
         run: |
-          VERSION="${{ github.event.client_payload.version }}"
-          BRANCH="${{ github.event.client_payload.branch }}"
-
-          if [ -z "$VERSION" ]; then
-            echo "Error: version not provided in payload" && exit 1
-          fi
-          if [ -z "$BRANCH" ]; then
-            echo "Warning: branch not provided, defaulting to dev"
-            BRANCH="dev"
-          fi
-
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-          echo "Received build for branch=$BRANCH, version=$VERSION"
+          echo "Received build for branch=${{ inputs.branch }}, version=${{ inputs.version }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -57,8 +46,8 @@ jobs:
           file: backend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:v${{ steps.meta.outputs.version }}
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:${{ steps.meta.outputs.branch }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:v${{ inputs.version }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:${{ inputs.branch }}
 
       - name: Build and push frontend
         uses: docker/build-push-action@v5
@@ -67,8 +56,8 @@ jobs:
           file: frontend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:v${{ steps.meta.outputs.version }}
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:${{ steps.meta.outputs.branch }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:v${{ inputs.version }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:${{ inputs.branch }}
 
       - name: Trigger update in flux repo
         uses: peter-evans/repository-dispatch@v3
@@ -78,6 +67,6 @@ jobs:
           event-type: update-jobwatch-deploy
           client-payload: |
             {
-              "branch": "${{ steps.meta.outputs.branch }}",
-              "version": "v${{ steps.meta.outputs.version }}"
+              "branch": "${{ inputs.branch }}",
+              "version": "v${{ inputs.version }}"
             }
