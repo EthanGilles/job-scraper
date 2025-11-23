@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse, PlainTextResponse, FileResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 import json
 import time
 import uvicorn
@@ -11,7 +11,7 @@ from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 # Prometheus metrics
 from prometheus_fastapi_instrumentator import Instrumentator
-from prometheus_client import Counter, Histogram, REGISTRY, Gauge
+from prometheus_client import Counter, Histogram, Gauge
 # run_check_once
 from backend.core import run_check_once
 from backend.config import DATA_FILE, LOG_FILE
@@ -45,6 +45,7 @@ app.add_middleware(
 scrape_counter = Counter("job_scrapes_total", "Total number of scrapes triggered via API")
 scrape_duration = Histogram("job_scrape_duration_seconds", "Duration of job scrapes triggered via API (seconds)")
 last_scrape_time = None  # global variable to store last scrape
+
 jobs_total_gauge = Gauge("jobs_total", "Total jobs available")
 jobs_added_gauge = Gauge("jobs_added_since_last_scrape", "Number of jobs added since last scrape")
 avg_job_length_gauge = Gauge("avg_job_length_characters", "Average job posting length (title + description)")
@@ -52,19 +53,11 @@ jobs_per_company_gauge = Gauge("jobs_per_company", "Number of jobs per company",
 jobs_per_keyword_gauge = Gauge("jobs_per_keyword", "Number of jobs matching keywords", ["keyword"])
 jobs_per_location_gauge = Gauge("jobs_per_location", "Number of jobs per city/country", ["location"])
 
-REGISTRY.register(jobs_total_gauge)
-REGISTRY.register(jobs_added_gauge)
-REGISTRY.register(avg_job_length_gauge)
-REGISTRY.register(jobs_per_company_gauge)
-REGISTRY.register(jobs_per_keyword_gauge)
-REGISTRY.register(jobs_per_location_gauge)
-
-# Metrics endpoint
+# Instrumentator
 instrumentator = Instrumentator()
-instrumentator.instrument(app).expose(app, endpoint="/metrics", should_group_status_codes=False)
-instrumentator.add(
-    lambda: [jobs_total_gauge, jobs_added_gauge, avg_job_length_gauge, jobs_per_company_gauge, jobs_per_keyword_gauge, jobs_per_location_gauge], 
-    name="custom_job_metrics"
+instrumentator.instrument(app).expose(
+    app,
+    endpoint="/metrics",
 )
 
 # Healthcheck endpoint
@@ -75,16 +68,6 @@ def health():
 # Jobs JSON endpoint
 @app.get("/jobs", response_class=JSONResponse)
 def jobs():
-    """
-    Returns jobs JSON, caching results in Redis for 30 minutes
-    Also updates Prometheus metrics:
-        - total jobs
-        - jobs added since last scrape
-        - average job length (title + description)
-        - jobs per company
-        - jobs per keyword
-        - jobs per location
-    """
     global last_scrape_time
 
     cached = r.get(JOBS_CACHE_KEY)
@@ -115,11 +98,10 @@ def jobs():
         data = json.load(f)
 
     total_jobs = sum(len(jobs_list) for jobs_list in data.values())
-
     previous_total_jobs = r.get("previous_total_jobs")
     previous_total_jobs = int(previous_total_jobs) if previous_total_jobs else total_jobs
     jobs_added = total_jobs - previous_total_jobs
-    r.set("previous_total_jobs", total_jobs)  # store current total for next scrape
+    r.set("previous_total_jobs", total_jobs)
 
     job_lengths = []
     company_counts = {}
@@ -142,6 +124,7 @@ def jobs():
 
     avg_length = sum(job_lengths) / len(job_lengths) if job_lengths else 0
 
+    # Update Prometheus metrics
     jobs_total_gauge.set(total_jobs)
     jobs_added_gauge.set(jobs_added)
     avg_job_length_gauge.set(avg_length)
@@ -208,9 +191,6 @@ def top_jobs():
 # Log endpoint
 @app.get("/logs", response_class=PlainTextResponse)
 def logs(lines: int = 500):
-    """
-    Return last N lines of the log file. Example: /logs?lines=200
-    """
     if not LOG_FILE.exists():
         raise HTTPException(status_code=404, detail=f"{LOG_FILE} not found")
 
@@ -225,9 +205,6 @@ def logs(lines: int = 500):
 # Homepage Dashboard endpoint
 @app.get("/stats")
 def stats():
-    """
-    Returns stats used on the homepage dashboard of the app
-    """
     cached = r.get(STATS_CACHE_KEY)
     if cached:
         logger.info("[Cache] Returning stats from Redis cache")
@@ -267,10 +244,11 @@ def stats():
         "last_scrape": last_scrape_time or "N/A"
     }
 
-    # Cache the result
     r.setex(STATS_CACHE_KEY, CACHE_TTL_SECONDS, json.dumps(result))
     return JSONResponse(content=result)
+
 
 if __name__ == "__main__":
     logger.info("[Start] Starting Job Scraper API")
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False, log_level="info")
+
