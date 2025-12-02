@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -25,6 +27,7 @@ jobs:
         run: |
           VERSION=$(jq -r '.version' frontend/package.json)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
 
       - name: Create production tag
         run: |
@@ -33,3 +36,13 @@ jobs:
           git config user.email "github-actions[release bot]@users.noreply.github.com"
           git tag "v$VERSION"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v$VERSION"
+
+  build:
+    needs: release
+    uses: ethangilles/job-scraper/.github/workflows/build-and-push.yaml@main
+    with:
+      branch: main
+      version: ${{ needs.release.outputs.version }}
+    secrets:
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
+      FLUX_REPO_PAT: ${{ secrets.FLUX_REPO_PAT }}

@@ -4,6 +4,7 @@ from .digitalocean import scrape_digitalocean
 from .atlassian import scrape_atlassian
 from .datadog import scrape_datadog
 from .databricks import scrape_databricks
+from .visa import scrape_visa
 
 SCRAPERS = {
     "stripe": scrape_stripe,
@@ -12,5 +13,5 @@ SCRAPERS = {
     "atlassian": scrape_atlassian,
     "datadog": scrape_datadog,
     "databricks": scrape_databricks,
+    "visa": scrape_visa,
 }
-

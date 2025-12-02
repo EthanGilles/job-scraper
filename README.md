@@ -1,6 +1,8 @@
-# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-0.9.6-blue?style=for-the-badge)
+# JobWatch &nbsp;![Version](https://img.shields.io/badge/version-0.9.23-blue?style=for-the-badge)
 > Automated job scraper and monitoring dashboard 
 for tracking new software roles at select companies.
+
+[My Self Hosted Instance](https://jobwatch.ethan-fullstack.dev/)
 
 ---
 ## Frontend Screenshots
@@ -27,6 +29,11 @@ In my cluster, JobWatch is monitored by Prometheus using a ServiceMonitor.
 A Grafana dashboard for this application is a WIP.
 
 ---
+## CI/CD Pipeline
+
+![JobWatch CI/CD Flowchart](https://github.com/EthanGilles/EthanGilles/blob/de9aebd5f1b916edf6f4c46b5066360ed463b4d4/homelab-diagrams/JobWatch%20CI_CD.svg)
+
+---
 ## Features
 **Scraper**
 - Gathers jobs from multiple companies:
@@ -35,6 +42,8 @@ A Grafana dashboard for this application is a WIP.
     - DigitalOcean
     - Atlassian
     - Datadog
+    - Databricks
+    - Visa
 - Filters out roles containing unwanted keywords like “Senior,” “Manager,” or “PhD.”
 - Maintains a record of seen jobs in jobs_seen.json
 - Runs continuously or manually, scraping 3× daily (8AM, 12PM, 5PM)
@@ -137,9 +146,13 @@ Plaid - 3 new job(s)
 ---
 ## Monitoring and metrics
 JobWatch exposes Prometheus metrics such as:
-- job_scrapes_total → Total scrapes executed
-- job_scrape_duration_seconds → Scrape duration histogram
-- job_scrapes_created → Latest scrape timestamp
+- job_scrapes_total →  Total scrapes executed
+- job_scrape_duration_seconds →  Scrape duration histogram
+- job_scrapes_created →  Latest scrape timestamp
+- jobs_total -> Total amount of jobs
+- jobs_added_since_last_scrape -> New jobs found since the last scrape
+- avg_job_length_characters -> Shows the average characters in job titles and descriptions
+- jobs_per_company -> Number of jobs per company
 Integrate with Prometheus or Grafana for real-time monitoring.
 
 ---

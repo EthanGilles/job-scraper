@@ -1,10 +1,19 @@
 name: Build and Push Docker Images
 
 on:
-  push:
-    branches:
-      - dev
-      - main
+  workflow_call:
+    secrets:
+      GHCR_PAT:
+        required: true
+      FLUX_REPO_PAT:
+        required: true
+    inputs:
+      branch:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -16,7 +25,14 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout correct branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Log input info
+        run: |
+          echo "Received build for branch=${{ inputs.branch }}, version=${{ inputs.version }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -35,7 +51,8 @@ jobs:
           file: backend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:v${{ inputs.version }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.BACKEND_IMAGE }}:${{ inputs.branch }}
 
       - name: Build and push frontend
         uses: docker/build-push-action@v5
@@ -44,4 +61,17 @@ jobs:
           file: frontend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:v${{ inputs.version }}
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.FRONTEND_IMAGE }}:${{ inputs.branch }}
+
+      - name: Trigger update in flux repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.FLUX_REPO_PAT }}
+          repository: ethangilles/kube-homelab
+          event-type: update-jobwatch-deploy
+          client-payload: |
+            {
+              "branch": "${{ inputs.branch }}",
+              "version": "v${{ inputs.version }}"
+            }
